@@ -5,6 +5,7 @@ import {
   StyleSheet,
   ScrollView,
   RefreshControl,
+  TouchableOpacity,
 } from 'react-native';
 import { CoinPack, TransactionRecord } from '../types';
 import { mockIAPService } from '../services/iap/mockIAPService';
@@ -149,12 +150,25 @@ export const CoinStoreScreen: React.FC<Props> = ({ onShowToast }) => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#38bdf8" />
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#00A86B" />
         }
       >
-        {/* Clean, Human Section Header */}
+        {/* Clean, Human Section Header with Test Skeleton button */}
         <View style={styles.sectionHeaderWrap}>
-          <Text style={styles.sectionTitle}>Get Coins</Text>
+          <View style={styles.sectionTitleRow}>
+            <Text style={styles.sectionTitle}>Get Coins</Text>
+            <TouchableOpacity
+              style={styles.skeletonTestBtn}
+              onPress={() => {
+                setLoading(true);
+                fetchCatalog();
+              }}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="sparkles-outline" size={12} color="#059669" style={{ marginRight: 4 }} />
+              <Text style={styles.skeletonTestText}>Test Skeleton</Text>
+            </TouchableOpacity>
+          </View>
           <Text style={styles.sectionSubtitle}>
             Instant delivery to your wallet • Zero transaction fees
           </Text>
@@ -222,11 +236,31 @@ const styles = StyleSheet.create({
   sectionHeaderWrap: {
     marginBottom: 16,
   },
+  sectionTitleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   sectionTitle: {
     color: '#0f172a',
     fontSize: 18,
     fontWeight: '800',
     letterSpacing: -0.3,
+  },
+  skeletonTestBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ecfdf5',
+    borderColor: '#a7f3d0',
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 14,
+  },
+  skeletonTestText: {
+    color: '#047857',
+    fontSize: 11,
+    fontWeight: '700',
   },
   sectionSubtitle: {
     color: '#64748b',

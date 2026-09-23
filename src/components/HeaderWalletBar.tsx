@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 interface Props {
   onSendGiftPress: () => void;
-  onOpenDiagnostics: () => void;
+  onOpenDiagnostics: (tab?: 'SCENARIOS' | 'LEDGER' | 'POLICY') => void;
   isSendingGift: boolean;
 }
 
@@ -39,7 +39,7 @@ export const HeaderWalletBar: React.FC<Props> = ({
         <TouchableOpacity
           style={[styles.testDockBtn, simulate500Error && styles.testDockBtnActive]}
           activeOpacity={0.8}
-          onPress={onOpenDiagnostics}
+          onPress={() => onOpenDiagnostics('SCENARIOS')}
         >
           <Ionicons
             name={simulate500Error ? 'alert-circle' : 'flask'}
@@ -90,7 +90,7 @@ export const HeaderWalletBar: React.FC<Props> = ({
           <TouchableOpacity
             style={styles.secondaryActionBtn}
             activeOpacity={0.85}
-            onPress={onOpenDiagnostics}
+            onPress={() => onOpenDiagnostics('LEDGER')}
           >
             <Ionicons name="time-outline" size={16} color="#047857" style={{ marginRight: 6 }} />
             <Text style={styles.secondaryActionText}>Ledger</Text>

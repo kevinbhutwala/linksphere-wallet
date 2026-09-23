@@ -4,11 +4,15 @@ import { Ionicons } from '@expo/vector-icons';
 
 interface Props {
   triggerKey: number; // incremented whenever gift is sent
+  giftEmoji?: string;
+  giftCost?: number;
 }
 
-const { width } = Dimensions.get('window');
-
-export const GiftAnimationOverlay: React.FC<Props> = ({ triggerKey }) => {
+export const GiftAnimationOverlay: React.FC<Props> = ({
+  triggerKey,
+  giftEmoji = '🎁',
+  giftCost = 50,
+}) => {
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const translateYAnim = useRef(new Animated.Value(40)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
@@ -59,12 +63,12 @@ export const GiftAnimationOverlay: React.FC<Props> = ({ triggerKey }) => {
         ]}
       >
         <View style={styles.giftIconCircle}>
-          <Text style={styles.giftEmoji}>🎁</Text>
+          <Text style={styles.giftEmoji}>{giftEmoji}</Text>
         </View>
 
         <View style={styles.floatingTag}>
-          <Ionicons name="sparkles" size={14} color="#f59e0b" style={{ marginRight: 4 }} />
-          <Text style={styles.floatingText}>-50 COINS</Text>
+          <Ionicons name="sparkles" size={14} color="#059669" style={{ marginRight: 4 }} />
+          <Text style={styles.floatingText}>-{giftCost} COINS</Text>
         </View>
       </Animated.View>
     </View>
@@ -74,7 +78,7 @@ export const GiftAnimationOverlay: React.FC<Props> = ({ triggerKey }) => {
 const styles = StyleSheet.create({
   pointerEventsNoneContainer: {
     position: 'absolute',
-    top: 140,
+    top: 150,
     left: 0,
     right: 0,
     alignItems: 'center',
@@ -85,36 +89,41 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   giftIconCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#8b5cf6',
+    width: 84,
+    height: 84,
+    borderRadius: 42,
+    backgroundColor: '#ffffff',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#8b5cf6',
+    shadowColor: '#00A86B',
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.6,
+    shadowOpacity: 0.25,
     shadowRadius: 16,
     elevation: 12,
     borderWidth: 3,
-    borderColor: '#c4b5fd',
+    borderColor: '#a7f3d0',
   },
   giftEmoji: {
-    fontSize: 42,
+    fontSize: 44,
   },
   floatingTag: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(15, 23, 42, 0.9)',
-    borderColor: '#f59e0b',
-    borderWidth: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 5,
+    backgroundColor: '#ffffff',
+    borderColor: '#a7f3d0',
+    borderWidth: 1.5,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
     borderRadius: 20,
-    marginTop: 8,
+    marginTop: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 4,
   },
   floatingText: {
-    color: '#fbbf24',
+    color: '#047857',
     fontSize: 13,
     fontWeight: '800',
     letterSpacing: 0.5,

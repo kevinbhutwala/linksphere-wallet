@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
 import { GatewayProduct, TransactionRecord } from '../types';
 import { mockGatewayService } from '../services/gateway/mockGatewayService';
 import { GatewayProductCard } from '../components/GatewayProductCard';
@@ -10,9 +10,10 @@ import { Ionicons } from '@expo/vector-icons';
 
 interface Props {
   onShowToast: (toast: ToastMessage) => void;
+  onOpenPolicy?: () => void;
 }
 
-export const DirectGatewayScreen: React.FC<Props> = ({ onShowToast }) => {
+export const DirectGatewayScreen: React.FC<Props> = ({ onShowToast, onOpenPolicy }) => {
   const [products, setProducts] = useState<GatewayProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -74,7 +75,7 @@ export const DirectGatewayScreen: React.FC<Props> = ({ onShowToast }) => {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#38bdf8" />
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#00A86B" />
         }
       >
         <View style={styles.sectionHeaderWrap}>
@@ -92,12 +93,16 @@ export const DirectGatewayScreen: React.FC<Props> = ({ onShowToast }) => {
           />
         ))}
 
-        <View style={styles.policyFooter}>
-          <Ionicons name="shield-checkmark-outline" size={13} color="#64748b" style={{ marginRight: 6 }} />
+        <TouchableOpacity
+          style={styles.policyFooter}
+          onPress={onOpenPolicy}
+          activeOpacity={0.7}
+        >
+          <Ionicons name="shield-checkmark-outline" size={14} color="#059669" style={{ marginRight: 6 }} />
           <Text style={styles.policyFooterText}>
-            Physical goods & external passes use direct Razorpay checkout per Store Policy.
+            Physical goods use direct Razorpay per Apple 3.1.1 policy • <Text style={{ color: '#059669', fontWeight: '700' }}>Learn More →</Text>
           </Text>
-        </View>
+        </TouchableOpacity>
       </ScrollView>
 
       {/* Razorpay Sheet Modal */}

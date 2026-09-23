@@ -16,18 +16,23 @@ import { GiftModal } from './src/components/GiftModal';
 import { Toast, ToastMessage } from './src/components/Toast';
 import { useWalletStore } from './src/store/useWalletStore';
 import { useTransactionStore } from './src/store/useTransactionStore';
+import { TransactionRecord } from './src/types';
+import { generateUUID } from './src/utils/uuid';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<'COINS' | 'STORE'>('COINS');
   const [diagnosticsVisible, setDiagnosticsVisible] = useState(false);
+  const [diagnosticsTab, setDiagnosticsTab] = useState<'SCENARIOS' | 'LEDGER' | 'POLICY'>('SCENARIOS');
   const [giftModalVisible, setGiftModalVisible] = useState(false);
+  const [activeGiftEmoji, setActiveGiftEmoji] = useState('🎁');
+  const [activeGiftCost, setActiveGiftCost] = useState(50);
   const [giftTriggerKey, setGiftTriggerKey] = useState(0);
   const [toast, setToast] = useState<ToastMessage | null>(null);
   const [isSendingGift, setIsSendingGift] = useState(false);
 
   const { sendGiftOptimistic, balance } = useWalletStore();
-  const { reconcilePendingTransactions } = useTransactionStore();
+  const { reconcilePendingTransactions, addPendingTransaction, updateTransactionStatus } = useTransactionStore();
 
   /**
    * REQUIREMENT: Automatic reconciliation hook on app launch
@@ -55,26 +60,52 @@ export default function App() {
   /**
    * EXECUTE OPTIMISTIC GIFT MUTATION
    */
-  const handleConfirmSendGift = async (gift: { id: string; cost: number; name: string }) => {
+  const handleConfirmSendGift = async (gift: { id: string; cost: number; name: string; emoji?: string }) => {
     setGiftModalVisible(false);
     setIsSendingGift(true);
+    setActiveGiftEmoji(gift.emoji || '🎁');
+    setActiveGiftCost(gift.cost);
     setGiftTriggerKey((prev) => prev + 1);
+
+    // Create client-side UUID and pre-persist in MMKV
+    const giftTx: TransactionRecord = {
+      id: `tx_${Date.now()}`,
+      idempotencyKey: generateUUID(),
+      productId: gift.id,
+      productType: 'GIFT_SPEND',
+      coins: -gift.cost,
+      amount: 0,
+      currency: 'COINS',
+      status: 'PENDING',
+      paymentMethod: 'IAP_STOREKIT',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+    addPendingTransaction(giftTx);
 
     try {
       await sendGiftOptimistic(gift.id, gift.cost);
 
+      updateTransactionStatus(giftTx.id, 'SETTLED', {
+        serverReceiptId: `rcpt_gift_${Date.now()}`,
+      });
+
       setToast({
         id: `gift_ok_${Date.now()}`,
         type: 'success',
-        title: `${gift.name} Sent! 🎁`,
+        title: `${gift.name} Sent! ${gift.emoji || '🎁'}`,
         description: `${gift.cost} coins deducted and verified by server.`,
       });
     } catch (err: any) {
+      updateTransactionStatus(giftTx.id, 'ROLLED_BACK', {
+        failureReason: `500 Server Error: Restored prior balance (${gift.cost} coins refunded).`,
+      });
+
       setToast({
         id: `gift_fail_${Date.now()}`,
         type: 'error',
-        title: 'Gift Could Not Be Sent',
-        description: `Server 500 failure simulated. 50 coins refunded to your wallet.`,
+        title: 'Gift Rolled Back (500 Error)',
+        description: `Server 500 failure simulated. ${gift.cost} coins smoothly refunded to your wallet.`,
       });
     } finally {
       setIsSendingGift(false);
@@ -118,7 +149,10 @@ export default function App() {
         {/* Hero Wallet Bar */}
         <HeaderWalletBar
           onSendGiftPress={() => setGiftModalVisible(true)}
-          onOpenDiagnostics={() => setDiagnosticsVisible(true)}
+          onOpenDiagnostics={(tab) => {
+            setDiagnosticsTab(tab || 'SCENARIOS');
+            setDiagnosticsVisible(true);
+          }}
           isSendingGift={isSendingGift}
         />
 
@@ -174,7 +208,13 @@ export default function App() {
           {activeTab === 'COINS' ? (
             <CoinStoreScreen onShowToast={(t) => setToast(t)} />
           ) : (
-            <DirectGatewayScreen onShowToast={(t) => setToast(t)} />
+            <DirectGatewayScreen
+              onShowToast={(t) => setToast(t)}
+              onOpenPolicy={() => {
+                setDiagnosticsTab('POLICY');
+                setDiagnosticsVisible(true);
+              }}
+            />
           )}
         </View>
 
@@ -191,13 +231,26 @@ export default function App() {
         <Toast toast={toast} onDismiss={() => setToast(null)} />
 
         {/* 60fps Gift Burst Particle Overlay */}
-        <GiftAnimationOverlay triggerKey={giftTriggerKey} />
+        <GiftAnimationOverlay
+          triggerKey={giftTriggerKey}
+          giftEmoji={activeGiftEmoji}
+          giftCost={activeGiftCost}
+        />
 
         {/* Test Scenarios & Ledger Drawer */}
         <DiagnosticsDrawer
           visible={diagnosticsVisible}
           onClose={() => setDiagnosticsVisible(false)}
           onSimulatedAppReboot={handleSimulatedAppReboot}
+          initialTab={diagnosticsTab}
+          onTrigger500Test={() =>
+            handleConfirmSendGift({
+              id: 'gift_rocket',
+              cost: 50,
+              name: 'Hyper Rocket',
+              emoji: '🚀',
+            })
+          }
         />
       </SafeAreaView>
     </SafeAreaProvider>
