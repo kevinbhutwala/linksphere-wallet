@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Switch } from 'react-native';
 import { useWalletStore } from '../store/useWalletStore';
 import { useDevSettingsStore } from '../store/useDevSettingsStore';
 import { Ionicons } from '@expo/vector-icons';
@@ -16,7 +16,7 @@ export const HeaderWalletBar: React.FC<Props> = ({
   isSendingGift,
 }) => {
   const { balance } = useWalletStore();
-  const { simulate500Error } = useDevSettingsStore();
+  const { simulate500Error, toggle500Error } = useDevSettingsStore();
 
   return (
     <View style={styles.container}>
@@ -95,6 +95,33 @@ export const HeaderWalletBar: React.FC<Props> = ({
             <Ionicons name="time-outline" size={16} color="#047857" style={{ marginRight: 6 }} />
             <Text style={styles.secondaryActionText}>Activity</Text>
           </TouchableOpacity>
+        </View>
+
+        {/* PDF Requirement: "Simulate 500 Server Failure" toggle directly on the screen */}
+        <View style={styles.sim500CardRow}>
+          <View style={styles.sim500Left}>
+            <View style={[styles.sim500IconWrap, simulate500Error && styles.sim500IconWrapActive]}>
+              <Ionicons
+                name={simulate500Error ? 'alert-circle' : 'server-outline'}
+                size={13}
+                color={simulate500Error ? '#dc2626' : '#059669'}
+              />
+            </View>
+            <View>
+              <Text style={[styles.sim500Label, simulate500Error && styles.sim500LabelActive]}>
+                Simulate 500 Server Failure
+              </Text>
+              <Text style={styles.sim500Sub}>
+                {simulate500Error ? 'Active • Rollback test enabled' : 'Instant debit & atomic rollback check'}
+              </Text>
+            </View>
+          </View>
+          <Switch
+            value={simulate500Error}
+            onValueChange={toggle500Error}
+            trackColor={{ false: '#e2e8f0', true: '#fca5a5' }}
+            thumbColor={simulate500Error ? '#dc2626' : '#ffffff'}
+          />
         </View>
       </View>
     </View>
@@ -287,5 +314,44 @@ const styles = StyleSheet.create({
     color: '#047857',
     fontSize: 13,
     fontWeight: '700',
+  },
+  sim500CardRow: {
+    marginTop: 14,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#f1f5f9',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  sim500Left: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  sim500IconWrap: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: '#ecfdf5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 8,
+  },
+  sim500IconWrapActive: {
+    backgroundColor: '#fee2e2',
+  },
+  sim500Label: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#334155',
+  },
+  sim500LabelActive: {
+    color: '#dc2626',
+  },
+  sim500Sub: {
+    fontSize: 10,
+    color: '#64748b',
+    marginTop: 1,
   },
 });

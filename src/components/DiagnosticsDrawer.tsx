@@ -256,7 +256,7 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
                     <Text style={styles.scenarioTitle}>Network Drop & Transaction Recovery</Text>
                   </View>
                   <Text style={styles.scenarioDesc}>
-                    During checkout, tapping "Simulate Network Interruption" preserves the transaction in MMKV with status INTERRUPTED. Running reconciliation recovers the purchase with zero duplicate crediting.
+                    During checkout, tapping "Kill App / Simulate Network Drop" preserves the transaction in MMKV with status INTERRUPTED. Running reconciliation recovers the purchase with zero duplicate crediting.
                   </Text>
 
                   <View style={{ flexDirection: 'row', gap: 10, marginTop: 12 }}>

@@ -69,6 +69,22 @@ export class MockIAPService {
   }
 
   /**
+   * PDF Requirement: Implement MockIAPService.purchase(productId) simulating
+   * a native StoreKit/Play Billing sheet with realistic latency (800ms–1500ms).
+   */
+  public async purchase(
+    productId: string,
+    options?: { shouldSimulateDrop?: boolean }
+  ): Promise<{ success: boolean; tx: TransactionRecord }> {
+    const pack = this.getProductById(productId);
+    if (!pack) {
+      throw new Error(`Product not found for productId: ${productId}`);
+    }
+    const pendingTx = this.createPendingTransaction(pack);
+    return this.executePurchase(pendingTx, options?.shouldSimulateDrop);
+  }
+
+  /**
    * Generates a new pending transaction with client-side UUID idempotency key
    * strictly before any network interaction.
    */

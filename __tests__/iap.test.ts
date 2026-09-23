@@ -27,6 +27,17 @@ describe('IAP & Direct Gateway Flow Simulation (Evaluation Criterion 4 & Archite
     expect(useWalletStore.getState().balance).toBe(initialBalance + 1450);
   });
 
+  test('MockIAPService.purchase(productId) matches PDF API spec with latency and UUID', async () => {
+    const productId = 'com.linksphere.coins.500';
+    const result = await mockIAPService.purchase(productId);
+
+    expect(result.success).toBe(true);
+    expect(result.tx.status).toBe('SETTLED');
+    expect(result.tx.idempotencyKey).toBeDefined();
+    expect(result.tx.coins).toBe(550); // 500 + 50 bonus
+    expect(result.tx.serverReceiptId).toBeDefined();
+  });
+
   test('Direct gateway order creates order for physical goods with separate payment method', async () => {
     const product = GATEWAY_PRODUCTS[0]; // Physical Hoodie
     const tx = mockGatewayService.createPendingOrder(product);

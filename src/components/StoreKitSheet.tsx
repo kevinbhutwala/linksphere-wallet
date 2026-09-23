@@ -103,10 +103,10 @@ export const StoreKitSheet: React.FC<Props> = ({
                 onPress={onSimulateKillApp}
               >
                 <Ionicons name="flash-off" size={16} color="#ffffff" style={{ marginRight: 6 }} />
-                <Text style={styles.killAppText}>Simulate Network Interruption</Text>
+                <Text style={styles.killAppText}>Kill App / Simulate Network Drop</Text>
               </TouchableOpacity>
               <Text style={styles.killHint}>
-                Simulates in-flight disruption & automatic reconciliation.
+                Simulates in-flight drop & automatic reconciliation on restart.
               </Text>
             </View>
           ) : (
