@@ -73,11 +73,11 @@ export const StoreKitSheet: React.FC<Props> = ({
             <Text style={styles.priceAmount}>{pack.priceFormatted}</Text>
           </View>
 
-          {/* Idempotency Pre-Persistence Badge */}
+          {/* Order Reference ID */}
           <View style={styles.idempotencyBox}>
             <View style={styles.idempotencyHeader}>
-              <Ionicons name="key-outline" size={14} color="#059669" />
-              <Text style={styles.idempotencyLabel}>Client-Side Idempotency Key (MMKV PENDING)</Text>
+              <Ionicons name="shield-checkmark" size={14} color="#059669" />
+              <Text style={styles.idempotencyLabel}>Order Reference (Client UUID)</Text>
             </View>
             <Text style={styles.idempotencyKey} numberOfLines={1} ellipsizeMode="middle">
               {transaction.idempotencyKey}
@@ -86,27 +86,27 @@ export const StoreKitSheet: React.FC<Props> = ({
 
           {/* Apple ID Account */}
           <View style={styles.accountRow}>
-            <Text style={styles.accountLabel}>Account</Text>
-            <Text style={styles.accountEmail}>user@icloud.com</Text>
+            <Text style={styles.accountLabel}>Apple ID Account</Text>
+            <Text style={styles.accountEmail}>kevin.bhutwala@icloud.com</Text>
           </View>
 
           {/* Action / State Area */}
           {isProcessing ? (
             <View style={styles.processingContainer}>
               <ActivityIndicator size="small" color="#059669" />
-              <Text style={styles.processingText}>Verifying with StoreKit & Backend Ledger...</Text>
+              <Text style={styles.processingText}>Contacting App Store & Verifying...</Text>
 
-              {/* SIMULATE NETWORK DROP / KILL APP BUTTON */}
+              {/* Edge Case Simulation Button */}
               <TouchableOpacity
                 style={styles.killAppButton}
                 activeOpacity={0.8}
                 onPress={onSimulateKillApp}
               >
                 <Ionicons name="flash-off" size={16} color="#ffffff" style={{ marginRight: 6 }} />
-                <Text style={styles.killAppText}>Kill App / Simulate Network Drop</Text>
+                <Text style={styles.killAppText}>Simulate Network Interruption</Text>
               </TouchableOpacity>
               <Text style={styles.killHint}>
-                Triggers mid-flight disconnection to test UUID reconciliation.
+                Simulates in-flight disruption & automatic reconciliation.
               </Text>
             </View>
           ) : (
@@ -120,10 +120,10 @@ export const StoreKitSheet: React.FC<Props> = ({
                 }}
               >
                 <Ionicons name="finger-print" size={22} color="#ffffff" style={{ marginRight: 8 }} />
-                <Text style={styles.payButtonText}>Double-Click / Pay with Face ID</Text>
+                <Text style={styles.payButtonText}>Pay with Face ID</Text>
               </TouchableOpacity>
               <Text style={styles.policySubtext}>
-                Consumable IAP governed by App Store Guideline 3.1.1
+                In-App Purchase • Instant Delivery • Apple ID Billed
               </Text>
             </View>
           )}

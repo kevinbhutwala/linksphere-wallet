@@ -30,19 +30,19 @@ export const HeaderWalletBar: React.FC<Props> = ({
             <Text style={styles.greeting}>LinkSphere Wallet</Text>
             <View style={styles.syncStatus}>
               <View style={styles.syncDot} />
-              <Text style={styles.syncText}>MMKV Synced</Text>
+              <Text style={styles.syncText}>Instant Sync • Active</Text>
             </View>
           </View>
         </View>
 
-        {/* Developer / Resilience Control Pill */}
+        {/* System / Resilience Console Pill */}
         <TouchableOpacity
           style={[styles.testDockBtn, simulate500Error && styles.testDockBtnActive]}
           activeOpacity={0.8}
           onPress={() => onOpenDiagnostics('SCENARIOS')}
         >
           <Ionicons
-            name={simulate500Error ? 'alert-circle' : 'flask'}
+            name={simulate500Error ? 'alert-circle' : 'options-outline'}
             size={14}
             color={simulate500Error ? '#ef4444' : '#059669'}
           />
@@ -52,7 +52,7 @@ export const HeaderWalletBar: React.FC<Props> = ({
               simulate500Error && styles.testDockTextActive,
             ]}
           >
-            {simulate500Error ? '500 Error ON' : 'Test Scenarios'}
+            {simulate500Error ? 'Server Error Active' : 'Console'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -93,7 +93,7 @@ export const HeaderWalletBar: React.FC<Props> = ({
             onPress={() => onOpenDiagnostics('LEDGER')}
           >
             <Ionicons name="time-outline" size={16} color="#047857" style={{ marginRight: 6 }} />
-            <Text style={styles.secondaryActionText}>Ledger</Text>
+            <Text style={styles.secondaryActionText}>Activity</Text>
           </TouchableOpacity>
         </View>
       </View>

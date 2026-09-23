@@ -119,8 +119,8 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
                 <Ionicons name="options-outline" size={18} color="#059669" />
               </View>
               <View>
-                <Text style={styles.title}>Payment Resilience Console</Text>
-                <Text style={styles.subtitle}>Test Edge Cases, MMKV Ledger & Compliance</Text>
+                <Text style={styles.title}>System Console & Audit Ledger</Text>
+                <Text style={styles.subtitle}>Resilience Controls, Ledger & Compliance</Text>
               </View>
             </View>
             <TouchableOpacity onPress={onClose} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
@@ -135,13 +135,13 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
               onPress={() => setActiveTab('SCENARIOS')}
             >
               <Ionicons
-                name="flask-outline"
+                name="shield-outline"
                 size={14}
                 color={activeTab === 'SCENARIOS' ? '#059669' : '#64748b'}
                 style={{ marginRight: 5 }}
               />
               <Text style={[styles.tabText, activeTab === 'SCENARIOS' && styles.tabTextActive]}>
-                Scenarios
+                Resilience Suite
               </Text>
             </TouchableOpacity>
 
@@ -156,7 +156,7 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
                 style={{ marginRight: 5 }}
               />
               <Text style={[styles.tabText, activeTab === 'LEDGER' && styles.tabTextActive]}>
-                MMKV Ledger ({transactions.length})
+                Transaction Ledger ({transactions.length})
               </Text>
             </TouchableOpacity>
 
@@ -177,7 +177,7 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
           </View>
 
           <ScrollView style={styles.scrollArea} showsVerticalScrollIndicator={false}>
-            {/* TAB 1: TEST SCENARIOS */}
+            {/* TAB 1: RESILIENCE SUITE */}
             {activeTab === 'SCENARIOS' && (
               <>
                 {/* Quick Metrics */}
@@ -198,30 +198,30 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
                   </View>
                 </View>
 
-                {/* SCENARIO 1: HAPPY PATH */}
+                {/* SUITE 1: HAPPY PATH */}
                 <View style={styles.scenarioCard}>
                   <View style={styles.scenarioHeaderRow}>
                     <View style={styles.scenarioTagBadge}>
-                      <Text style={styles.scenarioTagText}>SCENARIO 1</Text>
+                      <Text style={styles.scenarioTagText}>STOREKIT IAP</Text>
                     </View>
-                    <Text style={styles.scenarioTitle}>Happy Path Coin Purchase</Text>
+                    <Text style={styles.scenarioTitle}>Direct StoreKit In-App Purchase</Text>
                   </View>
                   <Text style={styles.scenarioDesc}>
                     Tap any coin pack on the main store. Verifies StoreKit sheet latency (800-1500ms), pre-persisted client-side UUID, and instant coin delivery.
                   </Text>
                 </View>
 
-                {/* SCENARIO 2: 500 SERVER FAILURE TOGGLE */}
+                {/* SUITE 2: 500 SERVER FAILURE TOGGLE */}
                 <View style={[styles.scenarioCard, simulate500Error && styles.scenarioCardActive]}>
                   <View style={styles.scenarioHeader}>
                     <View style={{ flex: 1, paddingRight: 10 }}>
                       <View style={styles.scenarioHeaderRow}>
                         <View style={[styles.scenarioTagBadge, simulate500Error && { backgroundColor: '#fee2e2' }]}>
                           <Text style={[styles.scenarioTagText, simulate500Error && { color: '#dc2626' }]}>
-                            SCENARIO 2
+                            SERVER RESILIENCE
                           </Text>
                         </View>
-                        <Text style={styles.scenarioTitle}>500 Error & Atomic Rollback</Text>
+                        <Text style={styles.scenarioTitle}>Server 500 Outage & Rollback</Text>
                       </View>
                       <Text style={styles.scenarioDesc}>
                         When enabled, sending a gift instantly debits the UI balance, fails on the mock server with 500, then smoothly rolls back to the prior balance from snapshot.
@@ -242,21 +242,21 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
                       activeOpacity={0.85}
                     >
                       <Ionicons name="flash" size={15} color="#ffffff" style={{ marginRight: 6 }} />
-                      <Text style={styles.scenarioActionBtnText}>Trigger Test Spend with 500 Rollback</Text>
+                      <Text style={styles.scenarioActionBtnText}>Trigger Spend with 500 Rollback</Text>
                     </TouchableOpacity>
                   )}
                 </View>
 
-                {/* SCENARIO 3: RECONCILE PENDING / INTERRUPTED PURCHASES */}
+                {/* SUITE 3: RECONCILE PENDING / INTERRUPTED PURCHASES */}
                 <View style={styles.scenarioCard}>
                   <View style={styles.scenarioHeaderRow}>
                     <View style={styles.scenarioTagBadge}>
-                      <Text style={styles.scenarioTagText}>SCENARIO 3</Text>
+                      <Text style={styles.scenarioTagText}>NETWORK DISRUPTION</Text>
                     </View>
-                    <Text style={styles.scenarioTitle}>Network Interruption & Recovery</Text>
+                    <Text style={styles.scenarioTitle}>Network Drop & Transaction Recovery</Text>
                   </View>
                   <Text style={styles.scenarioDesc}>
-                    During checkout, tapping "Kill App / Drop Network" preserves the transaction in MMKV with status INTERRUPTED. Running reconciliation recovers the purchase with zero duplicate crediting.
+                    During checkout, tapping "Simulate Network Interruption" preserves the transaction in MMKV with status INTERRUPTED. Running reconciliation recovers the purchase with zero duplicate crediting.
                   </Text>
 
                   <View style={{ flexDirection: 'row', gap: 10, marginTop: 12 }}>
@@ -296,8 +296,8 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
 
                 {/* RESET BUTTON */}
                 <TouchableOpacity style={styles.resetBtn} onPress={handleReset} activeOpacity={0.85}>
-                  <Ionicons name="trash-outline" size={15} color="#dc2626" style={{ marginRight: 6 }} />
-                  <Text style={styles.resetBtnText}>Reset Demo Ledger & Balance</Text>
+                  <Ionicons name="refresh-outline" size={15} color="#dc2626" style={{ marginRight: 6 }} />
+                  <Text style={styles.resetBtnText}>Reset Ledger & Restore Initial Balance</Text>
                 </TouchableOpacity>
               </>
             )}

@@ -139,8 +139,8 @@ export const CoinStoreScreen: React.FC<Props> = ({ onShowToast }) => {
     onShowToast({
       id: `toast_${Date.now()}`,
       type: 'error',
-      title: 'Simulated Network Drop',
-      description: 'Transaction preserved as INTERRUPTED in MMKV for auto-recovery.',
+      title: 'Connection Interrupted',
+      description: 'Transaction securely logged. Recover anytime from Activity.',
     });
   };
 
@@ -153,22 +153,9 @@ export const CoinStoreScreen: React.FC<Props> = ({ onShowToast }) => {
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#00A86B" />
         }
       >
-        {/* Clean, Human Section Header with Test Skeleton button */}
+        {/* Clean, Human Section Header */}
         <View style={styles.sectionHeaderWrap}>
-          <View style={styles.sectionTitleRow}>
-            <Text style={styles.sectionTitle}>Get Coins</Text>
-            <TouchableOpacity
-              style={styles.skeletonTestBtn}
-              onPress={() => {
-                setLoading(true);
-                fetchCatalog();
-              }}
-              activeOpacity={0.8}
-            >
-              <Ionicons name="sparkles-outline" size={12} color="#059669" style={{ marginRight: 4 }} />
-              <Text style={styles.skeletonTestText}>Test Skeleton</Text>
-            </TouchableOpacity>
-          </View>
+          <Text style={styles.sectionTitle}>Get Coins</Text>
           <Text style={styles.sectionSubtitle}>
             Instant delivery to your wallet • Zero transaction fees
           </Text>
@@ -194,9 +181,9 @@ export const CoinStoreScreen: React.FC<Props> = ({ onShowToast }) => {
 
         {/* Elegant Footer Trust Badge */}
         <View style={styles.trustBadge}>
-          <Ionicons name="lock-closed" size={13} color="#64748b" style={{ marginRight: 6 }} />
+          <Ionicons name="lock-closed" size={13} color="#059669" style={{ marginRight: 6 }} />
           <Text style={styles.trustText}>
-            Secured via Apple StoreKit & Idempotent UUID Verification
+            Official App Store In-App Purchases • 256-Bit Bank Grade Encryption
           </Text>
         </View>
       </ScrollView>

@@ -104,8 +104,8 @@ export default function App() {
       setToast({
         id: `gift_fail_${Date.now()}`,
         type: 'error',
-        title: 'Gift Rolled Back (500 Error)',
-        description: `Server 500 failure simulated. ${gift.cost} coins smoothly refunded to your wallet.`,
+        title: 'Gift Delivery Failed',
+        description: `Server connection interrupted. ${gift.cost} coins refunded to your balance.`,
       });
     } finally {
       setIsSendingGift(false);
@@ -117,8 +117,8 @@ export default function App() {
     setToast({
       id: `sim_reboot_${Date.now()}`,
       type: 'info',
-      title: 'Simulating App Relaunch...',
-      description: 'Running auto-reconciliation hook.',
+      title: 'Connecting to Cloud...',
+      description: 'Synchronizing wallet ledger...',
     });
 
     setTimeout(async () => {
@@ -127,15 +127,15 @@ export default function App() {
         setToast({
           id: `reboot_res_${Date.now()}`,
           type: 'success',
-          title: 'Purchases Recovered on Launch!',
-          description: `Recovered ${res.reconciledCount} purchase(s) with zero duplicate coins.`,
+          title: 'Transactions Recovered!',
+          description: `Successfully restored ${res.reconciledCount} purchase(s) (+${res.creditedCoins.toLocaleString()} coins).`,
         });
       } else {
         setToast({
           id: `reboot_clean_${Date.now()}`,
           type: 'info',
-          title: 'Reconciliation Clean',
-          description: 'All past transactions are already settled.',
+          title: 'Wallet Synchronized',
+          description: 'All past transactions are confirmed and settled.',
         });
       }
     }, 700);

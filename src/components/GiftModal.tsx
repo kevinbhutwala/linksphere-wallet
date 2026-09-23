@@ -82,7 +82,7 @@ export const GiftModal: React.FC<Props> = ({
           </View>
 
           <Text style={styles.hint}>
-            Optimistically deducted from wallet. Subject to 500 error rollback test.
+            Gifts are delivered instantly in chat with animated particle celebrations.
           </Text>
         </Pressable>
       </Pressable>

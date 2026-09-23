@@ -100,7 +100,7 @@ export const DirectGatewayScreen: React.FC<Props> = ({ onShowToast, onOpenPolicy
         >
           <Ionicons name="shield-checkmark-outline" size={14} color="#059669" style={{ marginRight: 6 }} />
           <Text style={styles.policyFooterText}>
-            Physical goods use direct Razorpay per Apple 3.1.1 policy • <Text style={{ color: '#059669', fontWeight: '700' }}>Learn More →</Text>
+            Official Merch & Passes • Secured by Razorpay Gateway • <Text style={{ color: '#059669', fontWeight: '700' }}>Store Policy →</Text>
           </Text>
         </TouchableOpacity>
       </ScrollView>
