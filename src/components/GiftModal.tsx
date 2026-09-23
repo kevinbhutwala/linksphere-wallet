@@ -18,10 +18,10 @@ interface GiftOption {
 }
 
 const GIFTS: GiftOption[] = [
-  { id: 'gift_star', name: 'Super Star', cost: 50, emoji: '⭐', color: '#f59e0b' },
-  { id: 'gift_rocket', name: 'Hyper Rocket', cost: 50, emoji: '🚀', color: '#8b5cf6' },
-  { id: 'gift_heart', name: 'Golden Heart', cost: 50, emoji: '💖', color: '#ec4899' },
-  { id: 'gift_crown', name: 'Royal Crown', cost: 50, emoji: '👑', color: '#eab308' },
+  { id: 'gift_star', name: 'Super Star', cost: 50, emoji: '⭐', color: '#059669' },
+  { id: 'gift_rocket', name: 'Hyper Rocket', cost: 50, emoji: '🚀', color: '#10b981' },
+  { id: 'gift_heart', name: 'Golden Heart', cost: 50, emoji: '💖', color: '#047857' },
+  { id: 'gift_crown', name: 'Royal Crown', cost: 50, emoji: '👑', color: '#059669' },
 ];
 
 interface Props {
@@ -53,7 +53,7 @@ export const GiftModal: React.FC<Props> = ({
               </Text>
             </View>
             <TouchableOpacity onPress={onClose} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-              <Ionicons name="close-circle" size={26} color="#475569" />
+              <Ionicons name="close-circle" size={26} color="#94a3b8" />
             </TouchableOpacity>
           </View>
 
@@ -68,12 +68,12 @@ export const GiftModal: React.FC<Props> = ({
                   disabled={!canAfford || isSending}
                   onPress={() => onSend(g)}
                 >
-                  <View style={[styles.emojiWrap, { backgroundColor: `${g.color}15`, borderColor: `${g.color}40` }]}>
+                  <View style={[styles.emojiWrap, { backgroundColor: '#ecfdf5', borderColor: '#a7f3d0' }]}>
                     <Text style={styles.emoji}>{g.emoji}</Text>
                   </View>
                   <Text style={styles.giftName}>{g.name}</Text>
                   <View style={styles.costBadge}>
-                    <Ionicons name="sparkles" size={11} color="#f59e0b" style={{ marginRight: 3 }} />
+                    <Ionicons name="sparkles" size={11} color="#059669" style={{ marginRight: 3 }} />
                     <Text style={styles.costText}>{g.cost} Coins</Text>
                   </View>
                 </TouchableOpacity>
@@ -93,23 +93,28 @@ export const GiftModal: React.FC<Props> = ({
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    backgroundColor: 'rgba(15, 23, 42, 0.4)',
     justifyContent: 'flex-end',
   },
   sheet: {
-    backgroundColor: '#12141c',
+    backgroundColor: '#ffffff',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 20,
     paddingTop: 12,
     paddingBottom: 36,
     borderWidth: 1,
-    borderColor: '#1e2436',
+    borderColor: '#e2e8f0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 10,
   },
   handle: {
     width: 36,
     height: 4,
-    backgroundColor: '#334155',
+    backgroundColor: '#cbd5e1',
     borderRadius: 2,
     alignSelf: 'center',
     marginBottom: 16,
@@ -121,19 +126,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
-    color: '#ffffff',
+    color: '#0f172a',
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: '800',
     letterSpacing: -0.3,
   },
   subtitle: {
-    color: '#94a3b8',
+    color: '#64748b',
     fontSize: 13,
     marginTop: 2,
   },
   balanceText: {
-    color: '#f59e0b',
-    fontWeight: '700',
+    color: '#059669',
+    fontWeight: '800',
   },
   grid: {
     flexDirection: 'row',
@@ -144,12 +149,12 @@ const styles = StyleSheet.create({
   },
   giftCard: {
     width: '48%',
-    backgroundColor: '#181c28',
+    backgroundColor: '#f8fafc',
     borderRadius: 16,
     padding: 14,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#262f44',
+    borderColor: '#e2e8f0',
   },
   disabledCard: {
     opacity: 0.4,
@@ -167,26 +172,28 @@ const styles = StyleSheet.create({
     fontSize: 30,
   },
   giftName: {
-    color: '#f8fafc',
+    color: '#0f172a',
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: '700',
     marginBottom: 6,
   },
   costBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#26241a',
+    backgroundColor: '#ecfdf5',
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#a7f3d0',
   },
   costText: {
-    color: '#fbbf24',
+    color: '#047857',
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   hint: {
-    color: '#64748b',
+    color: '#94a3b8',
     fontSize: 11,
     textAlign: 'center',
   },

@@ -32,7 +32,7 @@ export const CoinCard: React.FC<Props> = ({ pack, onPress, disabled }) => {
 
         <View style={styles.leftCol}>
           <View style={styles.iconCircle}>
-            <Ionicons name={getIconName() as any} size={24} color="#f59e0b" />
+            <Ionicons name={getIconName() as any} size={24} color="#059669" />
           </View>
           <View style={styles.infoCol}>
             <Text style={styles.title}>{pack.title}</Text>
@@ -62,14 +62,13 @@ export const CoinCard: React.FC<Props> = ({ pack, onPress, disabled }) => {
 
 const styles = StyleSheet.create({
   cardContainer: {
-    // Fixed layout dimensions matching CoinCardSkeleton to ensure Zero CLS
     height: 104,
     marginBottom: 14,
     width: '100%',
   },
   card: {
     height: 104,
-    backgroundColor: '#161922',
+    backgroundColor: '#ffffff',
     borderRadius: 18,
     paddingHorizontal: 16,
     paddingVertical: 14,
@@ -77,22 +76,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: '#22283a',
+    borderColor: '#e2e8f0',
     position: 'relative',
     overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 2,
   },
   badge: {
     position: 'absolute',
     top: 0,
     right: 18,
-    backgroundColor: '#f59e0b',
+    backgroundColor: '#10b981',
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderBottomLeftRadius: 6,
     borderBottomRightRadius: 6,
   },
   badgeText: {
-    color: '#000',
+    color: '#ffffff',
     fontSize: 9,
     fontWeight: '800',
     letterSpacing: 0.5,
@@ -105,9 +109,9 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#26241a',
+    backgroundColor: '#ecfdf5',
     borderWidth: 1,
-    borderColor: '#453817',
+    borderColor: '#a7f3d0',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 14,
@@ -116,9 +120,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    color: '#94a3b8',
+    color: '#64748b',
     fontSize: 13,
-    fontWeight: '500',
+    fontWeight: '600',
     marginBottom: 4,
   },
   coinsRow: {
@@ -126,32 +130,37 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   coinsText: {
-    color: '#f8fafc',
+    color: '#0f172a',
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   bonusTag: {
     marginLeft: 6,
-    backgroundColor: '#10b98122',
-    borderColor: '#10b98155',
+    backgroundColor: '#d1fae5',
+    borderColor: '#6ee7b7',
     borderWidth: 1,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 8,
   },
   bonusText: {
-    color: '#34d399',
+    color: '#047857',
     fontSize: 11,
     fontWeight: '700',
   },
   buyButton: {
-    backgroundColor: '#3b82f6',
+    backgroundColor: '#059669',
     paddingHorizontal: 18,
     paddingVertical: 11,
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     minWidth: 88,
+    shadowColor: '#059669',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 3,
   },
   disabledButton: {
     opacity: 0.5,

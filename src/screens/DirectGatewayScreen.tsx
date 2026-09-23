@@ -124,7 +124,7 @@ export const DirectGatewayScreen: React.FC<Props> = ({ onShowToast }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0c0f17',
+    backgroundColor: '#f8fafc',
   },
   scrollContent: {
     padding: 16,
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sectionTitle: {
-    color: '#f8fafc',
+    color: '#0f172a',
     fontSize: 18,
     fontWeight: '800',
     letterSpacing: -0.3,

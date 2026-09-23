@@ -2,18 +2,18 @@ import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated } from 'react-native';
 
 export const CoinCardSkeleton: React.FC = () => {
-  const shimmerAnim = useRef(new Animated.Value(0.3)).current;
+  const shimmerAnim = useRef(new Animated.Value(0.4)).current;
 
   useEffect(() => {
     const pulse = Animated.loop(
       Animated.sequence([
         Animated.timing(shimmerAnim, {
-          toValue: 0.7,
+          toValue: 0.85,
           duration: 750,
           useNativeDriver: true,
         }),
         Animated.timing(shimmerAnim, {
-          toValue: 0.3,
+          toValue: 0.4,
           duration: 750,
           useNativeDriver: true,
         }),
@@ -41,14 +41,13 @@ export const CoinCardSkeleton: React.FC = () => {
 
 const styles = StyleSheet.create({
   cardContainer: {
-    // Fixed layout dimensions matching CoinCard exactly to eliminate CLS
     height: 104,
     marginBottom: 14,
     width: '100%',
   },
   card: {
     height: 104,
-    backgroundColor: '#161922',
+    backgroundColor: '#ffffff',
     borderRadius: 18,
     paddingHorizontal: 16,
     paddingVertical: 14,
@@ -56,7 +55,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderWidth: 1,
-    borderColor: '#22283a',
+    borderColor: '#e2e8f0',
   },
   leftCol: {
     flexDirection: 'row',
@@ -66,7 +65,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    backgroundColor: '#262d42',
+    backgroundColor: '#e2e8f0',
     marginRight: 14,
   },
   textCol: {
@@ -76,19 +75,19 @@ const styles = StyleSheet.create({
     width: 120,
     height: 18,
     borderRadius: 6,
-    backgroundColor: '#262d42',
+    backgroundColor: '#e2e8f0',
     marginBottom: 8,
   },
   skeletonSubtitle: {
     width: 75,
     height: 14,
     borderRadius: 5,
-    backgroundColor: '#262d42',
+    backgroundColor: '#e2e8f0',
   },
   skeletonButton: {
     width: 88,
     height: 40,
     borderRadius: 12,
-    backgroundColor: '#262d42',
+    backgroundColor: '#e2e8f0',
   },
 });

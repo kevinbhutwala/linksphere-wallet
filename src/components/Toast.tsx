@@ -80,7 +80,7 @@ export const Toast: React.FC<Props> = ({ toast, onDismiss }) => {
                 : 'information-circle'
             }
             size={24}
-            color={isError ? '#f87171' : isSuccess ? '#34d399' : '#38bdf8'}
+            color={isError ? '#dc2626' : isSuccess ? '#059669' : '#0284c7'}
           />
         </View>
 
@@ -107,27 +107,27 @@ const styles = StyleSheet.create({
   toastCard: {
     width: '100%',
     maxWidth: 500,
-    backgroundColor: '#1e293b',
-    borderRadius: 14,
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 14,
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: '#e2e8f0',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.35,
-    shadowRadius: 10,
+    shadowOpacity: 0.12,
+    shadowRadius: 14,
     elevation: 8,
   },
   errorCard: {
-    backgroundColor: '#2b1212',
-    borderColor: '#ef4444',
+    backgroundColor: '#fff5f5',
+    borderColor: '#fecaca',
   },
   successCard: {
-    backgroundColor: '#062b1a',
-    borderColor: '#10b981',
+    backgroundColor: '#f0fdf4',
+    borderColor: '#bbf7d0',
   },
   iconCol: {
     marginRight: 12,
@@ -136,12 +136,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   titleText: {
-    color: '#ffffff',
+    color: '#0f172a',
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   descText: {
-    color: '#cbd5e1',
+    color: '#475569',
     fontSize: 12,
     marginTop: 2,
     lineHeight: 16,

@@ -21,7 +21,7 @@ export const GatewayProductCard: React.FC<Props> = ({
       <View style={styles.content}>
         <View style={styles.badgeRow}>
           <View style={styles.categoryBadge}>
-            <Ionicons name="cube-outline" size={12} color="#06b6d4" style={{ marginRight: 4 }} />
+            <Ionicons name="cube-outline" size={12} color="#047857" style={{ marginRight: 4 }} />
             <Text style={styles.badgeText}>{product.badge}</Text>
           </View>
           <Text style={styles.skuText}>{product.sku}</Text>
@@ -55,17 +55,22 @@ export const GatewayProductCard: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#161922',
+    backgroundColor: '#ffffff',
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: '#22283a',
+    borderColor: '#e2e8f0',
     marginBottom: 16,
     overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   image: {
     width: '100%',
     height: 140,
-    backgroundColor: '#1e2230',
+    backgroundColor: '#f1f5f9',
   },
   content: {
     padding: 16,
@@ -79,31 +84,31 @@ const styles = StyleSheet.create({
   categoryBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#06b6d418',
-    borderColor: '#06b6d440',
+    backgroundColor: '#ecfdf5',
+    borderColor: '#a7f3d0',
     borderWidth: 1,
     borderRadius: 6,
     paddingHorizontal: 8,
     paddingVertical: 3,
   },
   badgeText: {
-    color: '#22d3ee',
+    color: '#047857',
     fontSize: 10,
     fontWeight: '700',
   },
   skuText: {
-    color: '#64748b',
+    color: '#94a3b8',
     fontSize: 11,
     fontFamily: 'monospace',
   },
   title: {
-    color: '#f8fafc',
+    color: '#0f172a',
     fontSize: 16,
     fontWeight: '700',
     marginBottom: 6,
   },
   description: {
-    color: '#94a3b8',
+    color: '#64748b',
     fontSize: 13,
     lineHeight: 18,
     marginBottom: 14,
@@ -114,26 +119,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#22283a',
+    borderTopColor: '#f1f5f9',
   },
   priceLabel: {
-    color: '#64748b',
+    color: '#94a3b8',
     fontSize: 11,
     textTransform: 'uppercase',
     fontWeight: '600',
   },
   priceValue: {
-    color: '#ffffff',
+    color: '#0f172a',
     fontSize: 18,
     fontWeight: '800',
   },
   razorpayBtn: {
-    backgroundColor: '#0c2340',
-    borderWidth: 1,
-    borderColor: '#0284c7',
+    backgroundColor: '#059669',
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 12,
+    shadowColor: '#059669',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 3,
   },
   disabledBtn: {
     opacity: 0.5,
@@ -143,7 +151,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rzpBtnText: {
-    color: '#38bdf8',
+    color: '#ffffff',
     fontSize: 13,
     fontWeight: '700',
   },

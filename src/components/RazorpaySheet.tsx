@@ -45,13 +45,13 @@ export const RazorpaySheet: React.FC<Props> = ({
           <View style={styles.header}>
             <View>
               <View style={styles.rzpBadgeRow}>
-                <Ionicons name="shield-checkmark" size={16} color="#38bdf8" />
+                <Ionicons name="shield-checkmark" size={16} color="#059669" />
                 <Text style={styles.rzpTitle}>Razorpay Trusted Gateway</Text>
               </View>
               <Text style={styles.merchantName}>LinkSphere Physical Merch</Text>
             </View>
             <TouchableOpacity onPress={onCancel} disabled={isProcessing}>
-              <Ionicons name="close" size={24} color="#94a3b8" />
+              <Ionicons name="close-circle" size={26} color="#94a3b8" />
             </TouchableOpacity>
           </View>
 
@@ -72,7 +72,7 @@ export const RazorpaySheet: React.FC<Props> = ({
             onPress={() => setSelectedMethod('UPI')}
             disabled={isProcessing}
           >
-            <Ionicons name="phone-portrait-outline" size={20} color="#38bdf8" />
+            <Ionicons name="phone-portrait-outline" size={20} color="#059669" />
             <View style={styles.methodInfo}>
               <Text style={styles.methodTitle}>UPI / QR (Google Pay, PhonePe, Paytm)</Text>
               <Text style={styles.methodSubtitle}>Instant zero-fee transfer</Text>
@@ -80,7 +80,7 @@ export const RazorpaySheet: React.FC<Props> = ({
             <Ionicons
               name={selectedMethod === 'UPI' ? 'radio-button-on' : 'radio-button-off'}
               size={20}
-              color={selectedMethod === 'UPI' ? '#38bdf8' : '#475569'}
+              color={selectedMethod === 'UPI' ? '#059669' : '#94a3b8'}
             />
           </TouchableOpacity>
 
@@ -89,7 +89,7 @@ export const RazorpaySheet: React.FC<Props> = ({
             onPress={() => setSelectedMethod('CARD')}
             disabled={isProcessing}
           >
-            <Ionicons name="card-outline" size={20} color="#38bdf8" />
+            <Ionicons name="card-outline" size={20} color="#059669" />
             <View style={styles.methodInfo}>
               <Text style={styles.methodTitle}>Credit / Debit Cards</Text>
               <Text style={styles.methodSubtitle}>Visa, MasterCard, RuPay</Text>
@@ -97,7 +97,7 @@ export const RazorpaySheet: React.FC<Props> = ({
             <Ionicons
               name={selectedMethod === 'CARD' ? 'radio-button-on' : 'radio-button-off'}
               size={20}
-              color={selectedMethod === 'CARD' ? '#38bdf8' : '#475569'}
+              color={selectedMethod === 'CARD' ? '#059669' : '#94a3b8'}
             />
           </TouchableOpacity>
 
@@ -129,16 +129,21 @@ export const RazorpaySheet: React.FC<Props> = ({
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    backgroundColor: 'rgba(15, 23, 42, 0.45)',
     justifyContent: 'flex-end',
   },
   container: {
-    backgroundColor: '#0f172a',
+    backgroundColor: '#ffffff',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 22,
     borderWidth: 1,
-    borderColor: '#1e293b',
+    borderColor: '#e2e8f0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 14,
+    elevation: 10,
   },
   header: {
     flexDirection: 'row',
@@ -151,43 +156,45 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   rzpTitle: {
-    color: '#38bdf8',
+    color: '#059669',
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '800',
     marginLeft: 6,
     textTransform: 'uppercase',
   },
   merchantName: {
-    color: '#ffffff',
+    color: '#0f172a',
     fontSize: 17,
-    fontWeight: '700',
+    fontWeight: '800',
     marginTop: 2,
   },
   amountBar: {
-    backgroundColor: '#1e293b',
+    backgroundColor: '#f8fafc',
     borderRadius: 14,
     padding: 14,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 18,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
   },
   orderLabel: {
     color: '#64748b',
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   productTitle: {
-    color: '#f8fafc',
+    color: '#0f172a',
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '700',
     maxWidth: 220,
     marginTop: 2,
   },
   priceAmount: {
-    color: '#38bdf8',
+    color: '#059669',
     fontSize: 20,
-    fontWeight: '800',
+    fontWeight: '900',
   },
   sectionHeader: {
     color: '#64748b',
@@ -199,38 +206,43 @@ const styles = StyleSheet.create({
   methodCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1e293b',
+    backgroundColor: '#f8fafc',
     borderRadius: 12,
     padding: 14,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: '#e2e8f0',
   },
   methodSelected: {
-    borderColor: '#38bdf8',
-    backgroundColor: '#0369a122',
+    borderColor: '#059669',
+    backgroundColor: '#ecfdf5',
   },
   methodInfo: {
     flex: 1,
     marginLeft: 12,
   },
   methodTitle: {
-    color: '#f8fafc',
+    color: '#0f172a',
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   methodSubtitle: {
-    color: '#94a3b8',
+    color: '#64748b',
     fontSize: 11,
     marginTop: 2,
   },
   submitButton: {
-    backgroundColor: '#0284c7',
+    backgroundColor: '#059669',
     paddingVertical: 14,
     borderRadius: 12,
     alignItems: 'center',
     marginTop: 10,
     marginBottom: 10,
+    shadowColor: '#059669',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.25,
+    shadowRadius: 6,
+    elevation: 4,
   },
   disabledBtn: {
     opacity: 0.6,
@@ -238,7 +250,7 @@ const styles = StyleSheet.create({
   submitText: {
     color: '#ffffff',
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   complianceNote: {
     color: '#64748b',

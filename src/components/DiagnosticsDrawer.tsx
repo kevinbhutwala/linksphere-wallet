@@ -67,15 +67,15 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'SETTLED':
-        return { color: '#10b981', label: 'Settled' };
+        return { color: '#059669', bg: '#ecfdf5', label: 'Settled' };
       case 'PENDING':
-        return { color: '#f59e0b', label: 'Pending' };
+        return { color: '#d97706', bg: '#fef3c7', label: 'Pending' };
       case 'INTERRUPTED':
-        return { color: '#ef4444', label: 'Interrupted' };
+        return { color: '#dc2626', bg: '#fee2e2', label: 'Interrupted' };
       case 'ROLLED_BACK':
-        return { color: '#8b5cf6', label: 'Rolled Back' };
+        return { color: '#7c3aed', bg: '#f5f3ff', label: 'Rolled Back' };
       default:
-        return { color: '#64748b', label: status };
+        return { color: '#64748b', bg: '#f1f5f9', label: status };
     }
   };
 
@@ -87,7 +87,7 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
           <View style={styles.header}>
             <View style={styles.headerTitleRow}>
               <View style={styles.iconCircle}>
-                <Ionicons name="options-outline" size={18} color="#38bdf8" />
+                <Ionicons name="options-outline" size={18} color="#059669" />
               </View>
               <View>
                 <Text style={styles.title}>Test Scenarios & Ledger</Text>
@@ -95,7 +95,7 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
               </View>
             </View>
             <TouchableOpacity onPress={onClose} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-              <Ionicons name="close-circle" size={26} color="#64748b" />
+              <Ionicons name="close-circle" size={26} color="#94a3b8" />
             </TouchableOpacity>
           </View>
 
@@ -108,7 +108,7 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
               </View>
               <View style={styles.statCard}>
                 <Text style={styles.statLabel}>ROLLBACKS</Text>
-                <Text style={[styles.statValue, { color: rollbackCount > 0 ? '#f87171' : '#ffffff' }]}>
+                <Text style={[styles.statValue, { color: rollbackCount > 0 ? '#dc2626' : '#059669' }]}>
                   {rollbackCount}
                 </Text>
               </View>
@@ -121,8 +121,10 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
             {/* SCENARIO 2: 500 SERVER FAILURE TOGGLE */}
             <View style={[styles.scenarioCard, simulate500Error && styles.scenarioCardActive]}>
               <View style={styles.scenarioHeader}>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.scenarioTag}>SCENARIO 2</Text>
+                <View style={{ flex: 1, paddingRight: 10 }}>
+                  <Text style={[styles.scenarioTag, simulate500Error && { color: '#dc2626' }]}>
+                    SCENARIO 2
+                  </Text>
                   <Text style={styles.scenarioTitle}>Simulate 500 Server Error</Text>
                   <Text style={styles.scenarioDesc}>
                     When active, sending gifts instantly debits the UI balance, fails on the mock server, then smoothly rolls back.
@@ -131,8 +133,8 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
                 <Switch
                   value={simulate500Error}
                   onValueChange={toggle500Error}
-                  trackColor={{ false: '#334155', true: '#ef4444' }}
-                  thumbColor={simulate500Error ? '#ffffff' : '#94a3b8'}
+                  trackColor={{ false: '#cbd5e1', true: '#ef4444' }}
+                  thumbColor={simulate500Error ? '#ffffff' : '#f8fafc'}
                 />
               </View>
             </View>
@@ -163,7 +165,7 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
 
               {reconcileReport && (
                 <View style={styles.reportPill}>
-                  <Ionicons name="checkmark-circle" size={15} color="#34d399" style={{ marginRight: 6 }} />
+                  <Ionicons name="checkmark-circle" size={15} color="#059669" style={{ marginRight: 6 }} />
                   <Text style={styles.reportPillText}>{reconcileReport}</Text>
                 </View>
               )}
@@ -177,7 +179,7 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
 
             {transactions.length === 0 ? (
               <View style={styles.emptyCard}>
-                <Ionicons name="receipt-outline" size={24} color="#475569" style={{ marginBottom: 6 }} />
+                <Ionicons name="receipt-outline" size={24} color="#94a3b8" style={{ marginBottom: 6 }} />
                 <Text style={styles.emptyCardText}>No transactions recorded yet.</Text>
               </View>
             ) : (
@@ -190,7 +192,7 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
                         <Text style={styles.txId}>{tx.id}</Text>
                         <Text style={styles.txDate}>{new Date(tx.createdAt).toLocaleTimeString()}</Text>
                       </View>
-                      <View style={[styles.badgePill, { backgroundColor: `${badge.color}22` }]}>
+                      <View style={[styles.badgePill, { backgroundColor: badge.bg }]}>
                         <View style={[styles.badgeDot, { backgroundColor: badge.color }]} />
                         <Text style={[styles.badgeLabel, { color: badge.color }]}>{badge.label}</Text>
                       </View>
@@ -218,7 +220,7 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
 
             {/* RESET BUTTON */}
             <TouchableOpacity style={styles.resetBtn} onPress={handleReset} activeOpacity={0.85}>
-              <Ionicons name="trash-outline" size={15} color="#f87171" style={{ marginRight: 6 }} />
+              <Ionicons name="trash-outline" size={15} color="#dc2626" style={{ marginRight: 6 }} />
               <Text style={styles.resetBtnText}>Reset Demo Ledger & Balance</Text>
             </TouchableOpacity>
 
@@ -233,17 +235,22 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.7)',
+    backgroundColor: 'rgba(15, 23, 42, 0.45)',
     justifyContent: 'flex-end',
   },
   sheet: {
-    backgroundColor: '#0e111a',
+    backgroundColor: '#ffffff',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 20,
     maxHeight: '85%',
     borderWidth: 1,
-    borderColor: '#1e2436',
+    borderColor: '#e2e8f0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 10,
   },
   header: {
     flexDirection: 'row',
@@ -259,15 +266,17 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#162338',
+    backgroundColor: '#ecfdf5',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
+    borderWidth: 1,
+    borderColor: '#a7f3d0',
   },
   title: {
-    color: '#ffffff',
+    color: '#0f172a',
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   subtitle: {
     color: '#64748b',
@@ -283,12 +292,12 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: '#151926',
+    backgroundColor: '#f8fafc',
     borderRadius: 14,
     padding: 12,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#20273a',
+    borderColor: '#e2e8f0',
   },
   statLabel: {
     color: '#64748b',
@@ -296,22 +305,22 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   statValue: {
-    color: '#f8fafc',
-    fontSize: 16,
-    fontWeight: '800',
+    color: '#0f172a',
+    fontSize: 17,
+    fontWeight: '900',
     marginTop: 4,
   },
   scenarioCard: {
-    backgroundColor: '#151926',
+    backgroundColor: '#f0fdf4',
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#222a3d',
+    borderColor: '#bbf7d0',
   },
   scenarioCardActive: {
-    borderColor: '#ef4444',
-    backgroundColor: '#2e1215',
+    borderColor: '#fca5a5',
+    backgroundColor: '#fef2f2',
   },
   scenarioHeader: {
     flexDirection: 'row',
@@ -319,31 +328,36 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   scenarioTag: {
-    color: '#38bdf8',
+    color: '#059669',
     fontSize: 10,
     fontWeight: '800',
     letterSpacing: 0.5,
     marginBottom: 3,
   },
   scenarioTitle: {
-    color: '#f8fafc',
+    color: '#0f172a',
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: '800',
     marginBottom: 4,
   },
   scenarioDesc: {
-    color: '#94a3b8',
+    color: '#64748b',
     fontSize: 12,
     lineHeight: 16,
     marginBottom: 10,
   },
   actionBtn: {
-    backgroundColor: '#0284c7',
+    backgroundColor: '#059669',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 10,
     borderRadius: 10,
+    shadowColor: '#059669',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 2,
   },
   actionBtnText: {
     color: '#ffffff',
@@ -353,15 +367,15 @@ const styles = StyleSheet.create({
   reportPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#062b1a',
+    backgroundColor: '#ecfdf5',
     borderRadius: 8,
     padding: 10,
     marginTop: 10,
     borderWidth: 1,
-    borderColor: '#10b98133',
+    borderColor: '#a7f3d0',
   },
   reportPillText: {
-    color: '#34d399',
+    color: '#047857',
     fontSize: 12,
     fontWeight: '600',
     flex: 1,
@@ -380,27 +394,29 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   sectionSubtitle: {
-    color: '#475569',
+    color: '#94a3b8',
     fontSize: 11,
   },
   emptyCard: {
-    backgroundColor: '#151926',
+    backgroundColor: '#f8fafc',
     borderRadius: 14,
     padding: 24,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
     marginBottom: 16,
   },
   emptyCardText: {
-    color: '#64748b',
+    color: '#94a3b8',
     fontSize: 13,
   },
   txRow: {
-    backgroundColor: '#141824',
+    backgroundColor: '#ffffff',
     borderRadius: 14,
     padding: 14,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#20273a',
+    borderColor: '#e2e8f0',
   },
   txTop: {
     flexDirection: 'row',
@@ -409,12 +425,12 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   txId: {
-    color: '#f8fafc',
+    color: '#0f172a',
     fontSize: 13,
     fontWeight: '700',
   },
   txDate: {
-    color: '#64748b',
+    color: '#94a3b8',
     fontSize: 11,
     marginTop: 2,
   },
@@ -436,12 +452,12 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   uuidLabel: {
-    color: '#64748b',
+    color: '#94a3b8',
     fontSize: 10,
     marginTop: 2,
   },
   uuidValue: {
-    color: '#38bdf8',
+    color: '#047857',
     fontSize: 11,
     fontFamily: 'monospace',
     marginTop: 1,
@@ -452,19 +468,19 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: '#1e2436',
+    borderTopColor: '#f1f5f9',
   },
   footerCoins: {
-    color: '#f59e0b',
+    color: '#059669',
     fontSize: 13,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   footerMethod: {
-    color: '#94a3b8',
+    color: '#64748b',
     fontSize: 11,
   },
   failureNote: {
-    color: '#f87171',
+    color: '#dc2626',
     fontSize: 11,
     marginTop: 6,
   },
@@ -472,15 +488,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#261214',
-    borderColor: '#7f1d1d',
+    backgroundColor: '#fef2f2',
+    borderColor: '#fca5a5',
     borderWidth: 1,
     paddingVertical: 12,
     borderRadius: 12,
     marginTop: 8,
   },
   resetBtnText: {
-    color: '#f87171',
+    color: '#dc2626',
     fontSize: 13,
     fontWeight: '700',
   },

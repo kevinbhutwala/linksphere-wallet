@@ -43,8 +43,8 @@ export const HeaderWalletBar: React.FC<Props> = ({
         >
           <Ionicons
             name={simulate500Error ? 'alert-circle' : 'flask'}
-            size={15}
-            color={simulate500Error ? '#f87171' : '#38bdf8'}
+            size={14}
+            color={simulate500Error ? '#ef4444' : '#059669'}
           />
           <Text
             style={[
@@ -62,7 +62,7 @@ export const HeaderWalletBar: React.FC<Props> = ({
         <View style={styles.cardHeader}>
           <Text style={styles.cardLabel}>Available Balance</Text>
           <View style={styles.badgeInstant}>
-            <Ionicons name="flash" size={11} color="#10b981" />
+            <Ionicons name="flash" size={11} color="#059669" />
             <Text style={styles.badgeInstantText}>Instant</Text>
           </View>
         </View>
@@ -92,7 +92,7 @@ export const HeaderWalletBar: React.FC<Props> = ({
             activeOpacity={0.85}
             onPress={onOpenDiagnostics}
           >
-            <Ionicons name="time-outline" size={16} color="#94a3b8" style={{ marginRight: 6 }} />
+            <Ionicons name="time-outline" size={16} color="#047857" style={{ marginRight: 6 }} />
             <Text style={styles.secondaryActionText}>Ledger</Text>
           </TouchableOpacity>
         </View>
@@ -103,7 +103,7 @@ export const HeaderWalletBar: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#0c0f17',
+    backgroundColor: '#ffffff',
     paddingHorizontal: 16,
     paddingTop: 8,
     paddingBottom: 14,
@@ -122,22 +122,22 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#252d40',
+    backgroundColor: '#ecfdf5',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
     borderWidth: 1,
-    borderColor: '#374151',
+    borderColor: '#a7f3d0',
   },
   avatarText: {
-    color: '#e2e8f0',
+    color: '#047857',
     fontSize: 13,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   greeting: {
-    color: '#f8fafc',
+    color: '#0f172a',
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: '800',
     letterSpacing: -0.2,
   },
   syncStatus: {
@@ -155,43 +155,43 @@ const styles = StyleSheet.create({
   syncText: {
     color: '#64748b',
     fontSize: 11,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   testDockBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#161e2e',
-    borderColor: '#25354e',
+    backgroundColor: '#ecfdf5',
+    borderColor: '#a7f3d0',
     borderWidth: 1,
     paddingHorizontal: 11,
     paddingVertical: 6,
     borderRadius: 20,
-    marginRight: 40, // clear Expo Go gear icon
+    marginRight: 48, // clear Expo Go gear icon
   },
   testDockBtnActive: {
-    backgroundColor: '#3b1219',
-    borderColor: '#ef4444',
+    backgroundColor: '#fee2e2',
+    borderColor: '#fca5a5',
   },
   testDockText: {
-    color: '#38bdf8',
+    color: '#047857',
     fontSize: 11,
     fontWeight: '700',
     marginLeft: 5,
   },
   testDockTextActive: {
-    color: '#fca5a5',
+    color: '#dc2626',
   },
   heroCard: {
-    backgroundColor: '#141824',
+    backgroundColor: '#ffffff',
     borderRadius: 20,
     padding: 18,
     borderWidth: 1,
-    borderColor: '#1f2638',
-    shadowColor: '#000',
+    borderColor: '#e2e8f0',
+    shadowColor: '#059669',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 3,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -202,22 +202,22 @@ const styles = StyleSheet.create({
   cardLabel: {
     color: '#64748b',
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 0.6,
   },
   badgeInstant: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#062b1a',
+    backgroundColor: '#ecfdf5',
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#10b98133',
+    borderColor: '#a7f3d0',
   },
   badgeInstantText: {
-    color: '#34d399',
+    color: '#059669',
     fontSize: 10,
     fontWeight: '700',
     marginLeft: 3,
@@ -234,13 +234,13 @@ const styles = StyleSheet.create({
     fontSize: 26,
   },
   balanceAmount: {
-    color: '#ffffff',
+    color: '#0f172a',
     fontSize: 34,
-    fontWeight: '800',
+    fontWeight: '900',
     letterSpacing: -0.5,
   },
   currencyName: {
-    color: '#f59e0b',
+    color: '#059669',
     fontSize: 12,
     fontWeight: '800',
     letterSpacing: 0.8,
@@ -252,12 +252,17 @@ const styles = StyleSheet.create({
   },
   primaryActionBtn: {
     flex: 1.4,
-    backgroundColor: '#7c3aed',
+    backgroundColor: '#059669',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 11,
+    paddingVertical: 12,
     borderRadius: 12,
+    shadowColor: '#059669',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 4,
   },
   disabledBtn: {
     opacity: 0.6,
@@ -269,18 +274,18 @@ const styles = StyleSheet.create({
   },
   secondaryActionBtn: {
     flex: 1,
-    backgroundColor: '#1b202e',
+    backgroundColor: '#f0fdf4',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 11,
+    paddingVertical: 12,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#293245',
+    borderColor: '#bbf7d0',
   },
   secondaryActionText: {
-    color: '#cbd5e1',
+    color: '#047857',
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: '700',
   },
 });

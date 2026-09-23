@@ -113,7 +113,7 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
-        <StatusBar barStyle="light-content" backgroundColor="#0c0f17" />
+        <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
 
         {/* Hero Wallet Bar */}
         <HeaderWalletBar
@@ -127,7 +127,7 @@ export default function App() {
           <View style={styles.segmentedControl}>
             <TouchableOpacity
               style={[styles.segmentBtn, activeTab === 'COINS' && styles.segmentBtnActive]}
-              activeOpacity={0.8}
+              activeOpacity={0.85}
               onPress={() => setActiveTab('COINS')}
             >
               <Ionicons
@@ -148,7 +148,7 @@ export default function App() {
 
             <TouchableOpacity
               style={[styles.segmentBtn, activeTab === 'STORE' && styles.segmentBtnActive]}
-              activeOpacity={0.8}
+              activeOpacity={0.85}
               onPress={() => setActiveTab('STORE')}
             >
               <Ionicons
@@ -207,43 +207,49 @@ export default function App() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#0c0f17',
+    backgroundColor: '#ffffff',
   },
   segmentWrapper: {
     paddingHorizontal: 16,
     paddingTop: 4,
     paddingBottom: 10,
-    backgroundColor: '#0c0f17',
+    backgroundColor: '#ffffff',
   },
   segmentedControl: {
     flexDirection: 'row',
-    backgroundColor: '#151926',
+    backgroundColor: '#f1f5f9',
     borderRadius: 14,
     padding: 3,
     borderWidth: 1,
-    borderColor: '#20273a',
+    borderColor: '#e2e8f0',
   },
   segmentBtn: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 9,
+    paddingVertical: 10,
     borderRadius: 11,
   },
   segmentBtnActive: {
-    backgroundColor: '#273147',
+    backgroundColor: '#059669',
+    shadowColor: '#059669',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 3,
   },
   segmentText: {
     color: '#64748b',
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   segmentTextActive: {
     color: '#ffffff',
-    fontWeight: '700',
+    fontWeight: '800',
   },
   screenContainer: {
     flex: 1,
+    backgroundColor: '#f8fafc',
   },
 });
