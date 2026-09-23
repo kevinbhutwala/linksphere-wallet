@@ -136,6 +136,7 @@ const styles = StyleSheet.create({
   rightActions: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginRight: 48,
   },
   diagButton: {
     flexDirection: 'row',
