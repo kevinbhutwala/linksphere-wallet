@@ -12,14 +12,16 @@ import { CoinStoreScreen } from './src/screens/CoinStoreScreen';
 import { DirectGatewayScreen } from './src/screens/DirectGatewayScreen';
 import { DiagnosticsDrawer } from './src/components/DiagnosticsDrawer';
 import { GiftAnimationOverlay } from './src/components/GiftAnimationOverlay';
+import { GiftModal } from './src/components/GiftModal';
 import { Toast, ToastMessage } from './src/components/Toast';
 import { useWalletStore } from './src/store/useWalletStore';
 import { useTransactionStore } from './src/store/useTransactionStore';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<'IAP' | 'GATEWAY'>('IAP');
+  const [activeTab, setActiveTab] = useState<'COINS' | 'STORE'>('COINS');
   const [diagnosticsVisible, setDiagnosticsVisible] = useState(false);
+  const [giftModalVisible, setGiftModalVisible] = useState(false);
   const [giftTriggerKey, setGiftTriggerKey] = useState(0);
   const [toast, setToast] = useState<ToastMessage | null>(null);
   const [isSendingGift, setIsSendingGift] = useState(false);
@@ -28,7 +30,7 @@ export default function App() {
   const { reconcilePendingTransactions } = useTransactionStore();
 
   /**
-   * REQUIREMENT: Automatic reconciliation hook on app launch / restore
+   * REQUIREMENT: Automatic reconciliation hook on app launch
    */
   useEffect(() => {
     const runBootReconciliation = async () => {
@@ -38,8 +40,8 @@ export default function App() {
           setToast({
             id: `boot_recov_${Date.now()}`,
             type: 'success',
-            title: 'Automatic Reconciliation Recovered Transactions!',
-            description: `Recovered ${result.reconciledCount} interrupted purchase(s). Credited +${result.creditedCoins} coins.`,
+            title: 'Interrupted Purchases Recovered!',
+            description: `Restored ${result.reconciledCount} purchase(s). Credited +${result.creditedCoins.toLocaleString()} coins.`,
           });
         }
       } catch (err) {
@@ -51,30 +53,28 @@ export default function App() {
   }, []);
 
   /**
-   * REQUIREMENT: "Send Animated Gift" Action (50 Coins)
-   * Instant local balance deduction + fluid UI animation + synchronous MMKV storage.
-   * If 500 error toggle is active: atomic rollback to prior balance + non-blocking error toast.
+   * EXECUTE OPTIMISTIC GIFT MUTATION
    */
-  const handleSendGift = async () => {
+  const handleConfirmSendGift = async (gift: { id: string; cost: number; name: string }) => {
+    setGiftModalVisible(false);
     setIsSendingGift(true);
     setGiftTriggerKey((prev) => prev + 1);
 
     try {
-      await sendGiftOptimistic('gift_rocket_pack', 50);
+      await sendGiftOptimistic(gift.id, gift.cost);
 
       setToast({
         id: `gift_ok_${Date.now()}`,
         type: 'success',
-        title: 'Gift Sent Successfully! 🎁',
-        description: '50 coins deducted and validated by server.',
+        title: `${gift.name} Sent! 🎁`,
+        description: `${gift.cost} coins deducted and verified by server.`,
       });
     } catch (err: any) {
-      // Caught rolled-back error from store
       setToast({
         id: `gift_fail_${Date.now()}`,
         type: 'error',
-        title: 'Gift Failed (500 Server Error)',
-        description: `Backend validation failed. 50 coins smoothly rolled back to ${useWalletStore.getState().balance}.`,
+        title: 'Gift Could Not Be Sent',
+        description: `Server 500 failure simulated. 50 coins refunded to your wallet.`,
       });
     } finally {
       setIsSendingGift(false);
@@ -86,8 +86,8 @@ export default function App() {
     setToast({
       id: `sim_reboot_${Date.now()}`,
       type: 'info',
-      title: 'Simulating App Launch...',
-      description: 'Running reconcilePendingTransactions() hook.',
+      title: 'Simulating App Relaunch...',
+      description: 'Running auto-reconciliation hook.',
     });
 
     setTimeout(async () => {
@@ -96,15 +96,15 @@ export default function App() {
         setToast({
           id: `reboot_res_${Date.now()}`,
           type: 'success',
-          title: 'Transactions Reconciled on Boot!',
+          title: 'Purchases Recovered on Launch!',
           description: `Recovered ${res.reconciledCount} purchase(s) with zero duplicate coins.`,
         });
       } else {
         setToast({
           id: `reboot_clean_${Date.now()}`,
           type: 'info',
-          title: 'Boot Reconciliation Complete',
-          description: 'All transactions already settled.',
+          title: 'Reconciliation Clean',
+          description: 'All past transactions are already settled.',
         });
       }
     }, 700);
@@ -113,76 +113,87 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
-        <StatusBar barStyle="light-content" backgroundColor="#11141c" />
+        <StatusBar barStyle="light-content" backgroundColor="#0c0f17" />
 
-        {/* Global Wallet Bar with Balance, Gift CTA, & 500 Toggle */}
+        {/* Hero Wallet Bar */}
         <HeaderWalletBar
-          onSendGiftPress={handleSendGift}
+          onSendGiftPress={() => setGiftModalVisible(true)}
           onOpenDiagnostics={() => setDiagnosticsVisible(true)}
           isSendingGift={isSendingGift}
         />
 
-        {/* Navigation Tabs */}
-        <View style={styles.tabBar}>
-          <TouchableOpacity
-            style={[styles.tabItem, activeTab === 'IAP' && styles.activeTabItem]}
-            activeOpacity={0.8}
-            onPress={() => setActiveTab('IAP')}
-          >
-            <Ionicons
-              name="cart"
-              size={16}
-              color={activeTab === 'IAP' ? '#38bdf8' : '#64748b'}
-              style={{ marginRight: 6 }}
-            />
-            <Text
-              style={[
-                styles.tabLabel,
-                activeTab === 'IAP' && styles.activeTabLabel,
-              ]}
+        {/* Clean Segmented Tab Control */}
+        <View style={styles.segmentWrapper}>
+          <View style={styles.segmentedControl}>
+            <TouchableOpacity
+              style={[styles.segmentBtn, activeTab === 'COINS' && styles.segmentBtnActive]}
+              activeOpacity={0.8}
+              onPress={() => setActiveTab('COINS')}
             >
-              1. Digital Coin Store (IAP)
-            </Text>
-          </TouchableOpacity>
+              <Ionicons
+                name="sparkles"
+                size={14}
+                color={activeTab === 'COINS' ? '#ffffff' : '#64748b'}
+                style={{ marginRight: 6 }}
+              />
+              <Text
+                style={[
+                  styles.segmentText,
+                  activeTab === 'COINS' && styles.segmentTextActive,
+                ]}
+              >
+                Coin Store (IAP)
+              </Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.tabItem, activeTab === 'GATEWAY' && styles.activeTabItem]}
-            activeOpacity={0.8}
-            onPress={() => setActiveTab('GATEWAY')}
-          >
-            <Ionicons
-              name="card"
-              size={16}
-              color={activeTab === 'GATEWAY' ? '#38bdf8' : '#64748b'}
-              style={{ marginRight: 6 }}
-            />
-            <Text
-              style={[
-                styles.tabLabel,
-                activeTab === 'GATEWAY' && styles.activeTabLabel,
-              ]}
+            <TouchableOpacity
+              style={[styles.segmentBtn, activeTab === 'STORE' && styles.segmentBtnActive]}
+              activeOpacity={0.8}
+              onPress={() => setActiveTab('STORE')}
             >
-              2. Direct Gateway (Razorpay)
-            </Text>
-          </TouchableOpacity>
+              <Ionicons
+                name="bag-handle"
+                size={14}
+                color={activeTab === 'STORE' ? '#ffffff' : '#64748b'}
+                style={{ marginRight: 6 }}
+              />
+              <Text
+                style={[
+                  styles.segmentText,
+                  activeTab === 'STORE' && styles.segmentTextActive,
+                ]}
+              >
+                Merch & Passes
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
-        {/* Active Screen */}
+        {/* Screen Content */}
         <View style={styles.screenContainer}>
-          {activeTab === 'IAP' ? (
+          {activeTab === 'COINS' ? (
             <CoinStoreScreen onShowToast={(t) => setToast(t)} />
           ) : (
             <DirectGatewayScreen onShowToast={(t) => setToast(t)} />
           )}
         </View>
 
-        {/* Floating Non-Blocking Toast */}
+        {/* Gift Selector Modal */}
+        <GiftModal
+          visible={giftModalVisible}
+          onClose={() => setGiftModalVisible(false)}
+          onSend={handleConfirmSendGift}
+          userBalance={balance}
+          isSending={isSendingGift}
+        />
+
+        {/* Non-Blocking Floating Toast */}
         <Toast toast={toast} onDismiss={() => setToast(null)} />
 
-        {/* 60fps Fluid Gift Animation Overlay */}
+        {/* 60fps Gift Burst Particle Overlay */}
         <GiftAnimationOverlay triggerKey={giftTriggerKey} />
 
-        {/* Diagnostics & Transaction Ledger Drawer */}
+        {/* Test Scenarios & Ledger Drawer */}
         <DiagnosticsDrawer
           visible={diagnosticsVisible}
           onClose={() => setDiagnosticsVisible(false)}
@@ -196,35 +207,41 @@ export default function App() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#0a0d14',
+    backgroundColor: '#0c0f17',
   },
-  tabBar: {
-    flexDirection: 'row',
-    backgroundColor: '#11141c',
+  segmentWrapper: {
     paddingHorizontal: 16,
-    paddingBottom: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1e2433',
+    paddingTop: 4,
+    paddingBottom: 10,
+    backgroundColor: '#0c0f17',
   },
-  tabItem: {
+  segmentedControl: {
+    flexDirection: 'row',
+    backgroundColor: '#151926',
+    borderRadius: 14,
+    padding: 3,
+    borderWidth: 1,
+    borderColor: '#20273a',
+  },
+  segmentBtn: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 10,
-    borderBottomWidth: 2,
-    borderBottomColor: 'transparent',
+    paddingVertical: 9,
+    borderRadius: 11,
   },
-  activeTabItem: {
-    borderBottomColor: '#38bdf8',
+  segmentBtnActive: {
+    backgroundColor: '#273147',
   },
-  tabLabel: {
+  segmentText: {
     color: '#64748b',
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 13,
+    fontWeight: '600',
   },
-  activeTabLabel: {
-    color: '#38bdf8',
+  segmentTextActive: {
+    color: '#ffffff',
+    fontWeight: '700',
   },
   screenContainer: {
     flex: 1,

@@ -5,10 +5,9 @@ import {
   StyleSheet,
   ScrollView,
   RefreshControl,
-  TouchableOpacity,
 } from 'react-native';
 import { CoinPack, TransactionRecord } from '../types';
-import { mockIAPService, COIN_PACKS } from '../services/iap/mockIAPService';
+import { mockIAPService } from '../services/iap/mockIAPService';
 import { CoinCard } from '../components/CoinCard';
 import { CoinCardSkeleton } from '../components/CoinCardSkeleton';
 import { StoreKitSheet } from '../components/StoreKitSheet';
@@ -56,21 +55,18 @@ export const CoinStoreScreen: React.FC<Props> = ({ onShowToast }) => {
 
   /**
    * INITIATE PURCHASE:
-   * Generate UUID idempotency key & persist PENDING state locally strictly prior to API request
+   * Client-side UUID idempotency key pre-persistence before network call
    */
   const handleSelectPack = (pack: CoinPack) => {
     const pendingTx = mockIAPService.createPendingTransaction(pack);
-
-    // Synchronously write to MMKV before displaying sheet / contacting backend
     addPendingTransaction(pendingTx);
-
     setSelectedPack(pack);
     setActiveTx(pendingTx);
     setIsSheetVisible(true);
   };
 
   /**
-   * EXECUTE STOREKIT FLOW (800ms - 1500ms Latency)
+   * STOREKIT SHEET PAYMENT CONFIRMATION
    */
   const handleConfirmStoreKit = async () => {
     if (!activeTx || !selectedPack) return;
@@ -80,12 +76,10 @@ export const CoinStoreScreen: React.FC<Props> = ({ onShowToast }) => {
     try {
       const result = await mockIAPService.executePurchase(activeTx, false);
 
-      // Successfully settled!
       updateTransactionStatus(activeTx.id, 'SETTLED', {
         serverReceiptId: result.tx.serverReceiptId,
       });
 
-      // Credit coins into wallet
       creditCoins(activeTx.coins);
 
       setIsSheetVisible(false);
@@ -97,7 +91,7 @@ export const CoinStoreScreen: React.FC<Props> = ({ onShowToast }) => {
         id: `toast_${Date.now()}`,
         type: 'success',
         title: 'Purchase Successful!',
-        description: `Credited +${activeTx.coins} coins to your wallet.`,
+        description: `+${activeTx.coins.toLocaleString()} coins added to your wallet.`,
       });
     } catch (err: any) {
       setIsProcessingPurchase(false);
@@ -108,8 +102,8 @@ export const CoinStoreScreen: React.FC<Props> = ({ onShowToast }) => {
         onShowToast({
           id: `toast_${Date.now()}`,
           type: 'error',
-          title: 'Transaction Interrupted!',
-          description: 'Network dropped mid-flight. Recover via Ledger.',
+          title: 'Transaction Interrupted',
+          description: 'Payment suspended mid-flight. Preserved in Ledger.',
         });
       } else {
         updateTransactionStatus(activeTx.id, 'FAILED', {
@@ -118,23 +112,22 @@ export const CoinStoreScreen: React.FC<Props> = ({ onShowToast }) => {
         onShowToast({
           id: `toast_${Date.now()}`,
           type: 'error',
-          title: 'Purchase Failed',
-          description: err?.message || 'Payment was cancelled or rejected.',
+          title: 'Purchase Cancelled',
+          description: err?.message || 'Payment was not completed.',
         });
       }
     }
   };
 
   /**
-   * SIMULATE KILL APP / NETWORK DROP CONTROL
+   * SIMULATE NETWORK DROP / KILL APP
    */
   const handleSimulateKillApp = () => {
     if (!activeTx) return;
 
-    // Immediately mark transaction as INTERRUPTED in MMKV
     markInterrupted(
       activeTx.id,
-      'App killed / socket hang-up during StoreKit settlement window.'
+      'App killed / network dropped during StoreKit verification window.'
     );
 
     setIsProcessingPurchase(false);
@@ -145,8 +138,8 @@ export const CoinStoreScreen: React.FC<Props> = ({ onShowToast }) => {
     onShowToast({
       id: `toast_${Date.now()}`,
       type: 'error',
-      title: 'App Killed / Network Dropped',
-      description: 'Transaction preserved in MMKV as INTERRUPTED. Open Ledger to reconcile.',
+      title: 'Simulated Network Drop',
+      description: 'Transaction preserved as INTERRUPTED in MMKV for auto-recovery.',
     });
   };
 
@@ -159,21 +152,15 @@ export const CoinStoreScreen: React.FC<Props> = ({ onShowToast }) => {
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#38bdf8" />
         }
       >
-        {/* Policy & Domain Badge */}
-        <View style={styles.policyNotice}>
-          <View style={styles.policyHeader}>
-            <Ionicons name="shield-checkmark" size={16} color="#34d399" />
-            <Text style={styles.policyTitle}>Native In-App Purchase Flow (StoreKit / Play Billing)</Text>
-          </View>
-          <Text style={styles.policyDescription}>
-            Consumable digital currencies are strictly governed by Apple App Store (Guideline 3.1.1)
-            and Google Play billing policies. Every purchase generates a client-side UUID idempotency key.
+        {/* Clean, Human Section Header */}
+        <View style={styles.sectionHeaderWrap}>
+          <Text style={styles.sectionTitle}>Get Coins</Text>
+          <Text style={styles.sectionSubtitle}>
+            Instant delivery to your wallet • Zero transaction fees
           </Text>
         </View>
 
-        <Text style={styles.sectionHeader}>SELECT COIN PACK</Text>
-
-        {/* Catalog List with Zero CLS Skeleton Placeholders */}
+        {/* Catalog List with Zero CLS Skeleton Cards */}
         {loading ? (
           <>
             <CoinCardSkeleton />
@@ -191,20 +178,11 @@ export const CoinStoreScreen: React.FC<Props> = ({ onShowToast }) => {
           ))
         )}
 
-        {/* Feature Explainer */}
-        <View style={styles.infoCard}>
-          <View style={styles.infoHeader}>
-            <Ionicons name="information-circle" size={18} color="#38bdf8" />
-            <Text style={styles.infoTitle}>Test Scenarios Available</Text>
-          </View>
-          <Text style={styles.infoPoint}>
-            • <Text style={styles.bold}>Happy Path:</Text> Tap any coin pack to trigger native StoreKit sheet.
-          </Text>
-          <Text style={styles.infoPoint}>
-            • <Text style={styles.bold}>Optimistic Gift & 500 Rollback:</Text> Use the header toggle & button to test atomic rollback.
-          </Text>
-          <Text style={styles.infoPoint}>
-            • <Text style={styles.bold}>Network Drop Recovery:</Text> Tap "Kill App" inside the purchase sheet to verify UUID reconciliation.
+        {/* Elegant Footer Trust Badge */}
+        <View style={styles.trustBadge}>
+          <Ionicons name="lock-closed" size={13} color="#64748b" style={{ marginRight: 6 }} />
+          <Text style={styles.trustText}>
+            Secured via Apple StoreKit & Idempotent UUID Verification
           </Text>
         </View>
       </ScrollView>
@@ -219,7 +197,7 @@ export const CoinStoreScreen: React.FC<Props> = ({ onShowToast }) => {
         onCancel={() => {
           if (activeTx) {
             updateTransactionStatus(activeTx.id, 'FAILED', {
-              failureReason: 'User dismissed StoreKit sheet before confirmation.',
+              failureReason: 'User cancelled StoreKit sheet.',
             });
           }
           setIsSheetVisible(false);
@@ -235,70 +213,36 @@ export const CoinStoreScreen: React.FC<Props> = ({ onShowToast }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a0d14',
+    backgroundColor: '#0c0f17',
   },
   scrollContent: {
     padding: 16,
     paddingBottom: 32,
   },
-  policyNotice: {
-    backgroundColor: '#062b1a',
-    borderColor: '#10b98144',
-    borderWidth: 1,
-    borderRadius: 14,
-    padding: 14,
-    marginBottom: 18,
+  sectionHeaderWrap: {
+    marginBottom: 16,
   },
-  policyHeader: {
+  sectionTitle: {
+    color: '#f8fafc',
+    fontSize: 18,
+    fontWeight: '800',
+    letterSpacing: -0.3,
+  },
+  sectionSubtitle: {
+    color: '#64748b',
+    fontSize: 12,
+    marginTop: 3,
+  },
+  trustBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 6,
+    justifyContent: 'center',
+    marginTop: 18,
+    paddingVertical: 8,
   },
-  policyTitle: {
-    color: '#34d399',
-    fontSize: 12,
-    fontWeight: '700',
-    marginLeft: 6,
-  },
-  policyDescription: {
-    color: '#94a3b8',
-    fontSize: 11,
-    lineHeight: 16,
-  },
-  sectionHeader: {
+  trustText: {
     color: '#64748b',
     fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 0.5,
-    marginBottom: 12,
-  },
-  infoCard: {
-    backgroundColor: '#121622',
-    borderWidth: 1,
-    borderColor: '#1e2436',
-    borderRadius: 14,
-    padding: 14,
-    marginTop: 10,
-  },
-  infoHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  infoTitle: {
-    color: '#38bdf8',
-    fontSize: 13,
-    fontWeight: '700',
-    marginLeft: 6,
-  },
-  infoPoint: {
-    color: '#94a3b8',
-    fontSize: 12,
-    lineHeight: 18,
-    marginBottom: 4,
-  },
-  bold: {
-    color: '#f8fafc',
-    fontWeight: '700',
+    fontWeight: '500',
   },
 });

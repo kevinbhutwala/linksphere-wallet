@@ -63,8 +63,8 @@ export const DirectGatewayScreen: React.FC<Props> = ({ onShowToast }) => {
     onShowToast({
       id: `toast_${Date.now()}`,
       type: 'success',
-      title: 'Order Confirmed via Razorpay!',
-      description: `Payment ${gatewayPaymentId.slice(0, 12)} captured. Physical order dispatched.`,
+      title: 'Order Confirmed!',
+      description: `Razorpay payment captured. Shipping confirmation emailed.`,
     });
   };
 
@@ -77,19 +77,12 @@ export const DirectGatewayScreen: React.FC<Props> = ({ onShowToast }) => {
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#38bdf8" />
         }
       >
-        {/* Compliance & Policy Architecture Callout */}
-        <View style={styles.policyWarningCard}>
-          <View style={styles.cardHeader}>
-            <Ionicons name="alert-circle" size={18} color="#38bdf8" />
-            <Text style={styles.cardTitle}>Store Policy & Architectural Isolation</Text>
-          </View>
-          <Text style={styles.cardBody}>
-            Direct gateways (Razorpay/Stripe) are <Text style={styles.bold}>strictly isolated</Text> to physical merchandise and off-platform passes.
-            Under Apple Guideline 3.1.1 & Google Play policies, consumable in-game coins may NOT bypass StoreKit/Play Billing.
+        <View style={styles.sectionHeaderWrap}>
+          <Text style={styles.sectionTitle}>Physical Merch & Passes</Text>
+          <Text style={styles.sectionSubtitle}>
+            Official gear & conference badges • Shipped to your address
           </Text>
         </View>
-
-        <Text style={styles.sectionHeader}>PHYSICAL GOODS & EXTERNAL PASSES</Text>
 
         {products.map((product) => (
           <GatewayProductCard
@@ -98,6 +91,13 @@ export const DirectGatewayScreen: React.FC<Props> = ({ onShowToast }) => {
             onPayWithRazorpay={handleSelectProduct}
           />
         ))}
+
+        <View style={styles.policyFooter}>
+          <Ionicons name="shield-checkmark-outline" size={13} color="#64748b" style={{ marginRight: 6 }} />
+          <Text style={styles.policyFooterText}>
+            Physical goods & external passes use direct Razorpay checkout per Store Policy.
+          </Text>
+        </View>
       </ScrollView>
 
       {/* Razorpay Sheet Modal */}
@@ -124,45 +124,37 @@ export const DirectGatewayScreen: React.FC<Props> = ({ onShowToast }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a0d14',
+    backgroundColor: '#0c0f17',
   },
   scrollContent: {
     padding: 16,
     paddingBottom: 32,
   },
-  policyWarningCard: {
-    backgroundColor: '#0c2340',
-    borderColor: '#0284c7',
-    borderWidth: 1,
-    borderRadius: 14,
-    padding: 14,
-    marginBottom: 18,
+  sectionHeaderWrap: {
+    marginBottom: 16,
   },
-  cardHeader: {
+  sectionTitle: {
+    color: '#f8fafc',
+    fontSize: 18,
+    fontWeight: '800',
+    letterSpacing: -0.3,
+  },
+  sectionSubtitle: {
+    color: '#64748b',
+    fontSize: 12,
+    marginTop: 3,
+  },
+  policyFooter: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 6,
+    justifyContent: 'center',
+    marginTop: 14,
+    paddingVertical: 8,
   },
-  cardTitle: {
-    color: '#38bdf8',
-    fontSize: 12,
-    fontWeight: '700',
-    marginLeft: 6,
-  },
-  cardBody: {
-    color: '#94a3b8',
-    fontSize: 11,
-    lineHeight: 16,
-  },
-  bold: {
-    color: '#ffffff',
-    fontWeight: '700',
-  },
-  sectionHeader: {
+  policyFooterText: {
     color: '#64748b',
     fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 0.5,
-    marginBottom: 12,
+    fontWeight: '500',
+    textAlign: 'center',
   },
 });

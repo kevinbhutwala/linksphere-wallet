@@ -7,9 +7,11 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  Switch,
 } from 'react-native';
 import { useTransactionStore } from '../store/useTransactionStore';
 import { useWalletStore } from '../store/useWalletStore';
+import { useDevSettingsStore } from '../store/useDevSettingsStore';
 import { storage } from '../services/storage/storage';
 import { Ionicons } from '@expo/vector-icons';
 import { TransactionRecord } from '../types';
@@ -23,11 +25,11 @@ interface Props {
 export const DiagnosticsDrawer: React.FC<Props> = ({
   visible,
   onClose,
-  onSimulatedAppReboot,
 }) => {
-  const { transactions, isReconciling, lastReconciliationResult, reconcilePendingTransactions, clearTransactions } =
+  const { transactions, isReconciling, reconcilePendingTransactions, clearTransactions } =
     useTransactionStore();
   const { balance, rollbackCount, resetWallet } = useWalletStore();
+  const { simulate500Error, toggle500Error } = useDevSettingsStore();
   const [storageKeys, setStorageKeys] = useState<Record<string, string>>({});
   const [reconcileReport, setReconcileReport] = useState<string | null>(null);
 
@@ -40,17 +42,17 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
       refreshDump();
       setReconcileReport(null);
     }
-  }, [visible, transactions, balance]);
+  }, [visible, transactions, balance, simulate500Error]);
 
   const handleManualReconcile = async () => {
     try {
       const res = await reconcilePendingTransactions();
       setReconcileReport(
-        `Reconciliation Completed: ${res.reconciledCount} transactions resolved, +${res.creditedCoins} coins credited.`
+        `Reconciled: ${res.reconciledCount} purchase(s) recovered. +${res.creditedCoins} coins credited.`
       );
       refreshDump();
     } catch (err: any) {
-      setReconcileReport(`Reconciliation Failed: ${err?.message}`);
+      setReconcileReport(`Reconciliation error: ${err?.message}`);
     }
   };
 
@@ -59,21 +61,21 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
     resetWallet();
     clearTransactions();
     refreshDump();
-    setReconcileReport('All storage and state reset to defaults.');
+    setReconcileReport('Wallet and transaction ledger reset to fresh defaults.');
   };
 
-  const getStatusBadgeColor = (status: string) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
       case 'SETTLED':
-        return '#10b981';
+        return { color: '#10b981', label: 'Settled' };
       case 'PENDING':
-        return '#f59e0b';
+        return { color: '#f59e0b', label: 'Pending' };
       case 'INTERRUPTED':
-        return '#ef4444';
+        return { color: '#ef4444', label: 'Interrupted' };
       case 'ROLLED_BACK':
-        return '#8b5cf6';
+        return { color: '#8b5cf6', label: 'Rolled Back' };
       default:
-        return '#64748b';
+        return { color: '#64748b', label: status };
     }
   };
 
@@ -84,140 +86,140 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
           {/* Header */}
           <View style={styles.header}>
             <View style={styles.headerTitleRow}>
-              <Ionicons name="terminal" size={20} color="#38bdf8" />
-              <Text style={styles.title}>Ledger & Resilience Diagnostics</Text>
+              <View style={styles.iconCircle}>
+                <Ionicons name="options-outline" size={18} color="#38bdf8" />
+              </View>
+              <View>
+                <Text style={styles.title}>Test Scenarios & Ledger</Text>
+                <Text style={styles.subtitle}>Payment Resilience Console</Text>
+              </View>
             </View>
-            <TouchableOpacity onPress={onClose}>
-              <Ionicons name="close" size={24} color="#94a3b8" />
+            <TouchableOpacity onPress={onClose} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+              <Ionicons name="close-circle" size={26} color="#64748b" />
             </TouchableOpacity>
           </View>
 
           <ScrollView style={styles.scrollArea} showsVerticalScrollIndicator={false}>
-            {/* Quick Metrics Bar */}
-            <View style={styles.metricRow}>
-              <View style={styles.metricBox}>
-                <Text style={styles.metricLabel}>DISK BALANCE</Text>
-                <Text style={styles.metricVal}>{balance} Coins</Text>
+            {/* Quick Metrics */}
+            <View style={styles.statsGrid}>
+              <View style={styles.statCard}>
+                <Text style={styles.statLabel}>DISK BALANCE</Text>
+                <Text style={styles.statValue}>{balance.toLocaleString()}</Text>
               </View>
-              <View style={styles.metricBox}>
-                <Text style={styles.metricLabel}>ROLLBACKS</Text>
-                <Text style={styles.metricVal}>{rollbackCount}</Text>
+              <View style={styles.statCard}>
+                <Text style={styles.statLabel}>ROLLBACKS</Text>
+                <Text style={[styles.statValue, { color: rollbackCount > 0 ? '#f87171' : '#ffffff' }]}>
+                  {rollbackCount}
+                </Text>
               </View>
-              <View style={styles.metricBox}>
-                <Text style={styles.metricLabel}>RECORDS</Text>
-                <Text style={styles.metricVal}>{transactions.length}</Text>
+              <View style={styles.statCard}>
+                <Text style={styles.statLabel}>RECORDS</Text>
+                <Text style={styles.statValue}>{transactions.length}</Text>
               </View>
             </View>
 
-            {/* Reconciliation Control Banner */}
-            <View style={styles.reconcileBox}>
-              <Text style={styles.reconcileTitle}>Resilience Simulation Action</Text>
-              <Text style={styles.reconcileDesc}>
-                Simulate app relaunch after network drop to trigger `reconcilePendingTransactions()` against the mock backend.
+            {/* SCENARIO 2: 500 SERVER FAILURE TOGGLE */}
+            <View style={[styles.scenarioCard, simulate500Error && styles.scenarioCardActive]}>
+              <View style={styles.scenarioHeader}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.scenarioTag}>SCENARIO 2</Text>
+                  <Text style={styles.scenarioTitle}>Simulate 500 Server Error</Text>
+                  <Text style={styles.scenarioDesc}>
+                    When active, sending gifts instantly debits the UI balance, fails on the mock server, then smoothly rolls back.
+                  </Text>
+                </View>
+                <Switch
+                  value={simulate500Error}
+                  onValueChange={toggle500Error}
+                  trackColor={{ false: '#334155', true: '#ef4444' }}
+                  thumbColor={simulate500Error ? '#ffffff' : '#94a3b8'}
+                />
+              </View>
+            </View>
+
+            {/* SCENARIO 3: RECONCILE PENDING / INTERRUPTED PURCHASES */}
+            <View style={styles.scenarioCard}>
+              <Text style={styles.scenarioTag}>SCENARIO 3</Text>
+              <Text style={styles.scenarioTitle}>Network Interruption Recovery</Text>
+              <Text style={styles.scenarioDesc}>
+                Triggered automatically on app launch. Tap below to run the UUID reconciliation hook against pending in-flight transactions.
               </Text>
 
               <TouchableOpacity
-                style={styles.reconcileBtn}
+                style={styles.actionBtn}
                 onPress={handleManualReconcile}
                 disabled={isReconciling}
+                activeOpacity={0.85}
               >
                 {isReconciling ? (
                   <ActivityIndicator color="#ffffff" size="small" />
                 ) : (
                   <>
                     <Ionicons name="refresh" size={16} color="#ffffff" style={{ marginRight: 6 }} />
-                    <Text style={styles.reconcileBtnText}>Execute reconcilePendingTransactions()</Text>
+                    <Text style={styles.actionBtnText}>Run reconcilePendingTransactions()</Text>
                   </>
                 )}
               </TouchableOpacity>
 
               {reconcileReport && (
-                <View style={styles.reportBox}>
-                  <Text style={styles.reportText}>{reconcileReport}</Text>
+                <View style={styles.reportPill}>
+                  <Ionicons name="checkmark-circle" size={15} color="#34d399" style={{ marginRight: 6 }} />
+                  <Text style={styles.reportPillText}>{reconcileReport}</Text>
                 </View>
               )}
             </View>
 
-            {/* Local Transaction Ledger */}
-            <View style={styles.sectionHeaderRow}>
+            {/* TRANSACTION LEDGER */}
+            <View style={styles.sectionRow}>
               <Text style={styles.sectionTitle}>TRANSACTION LEDGER (MMKV)</Text>
-              <Text style={styles.sectionCount}>{transactions.length} total</Text>
+              <Text style={styles.sectionSubtitle}>{transactions.length} items</Text>
             </View>
 
             {transactions.length === 0 ? (
-              <View style={styles.emptyBox}>
-                <Text style={styles.emptyText}>No transactions recorded yet.</Text>
+              <View style={styles.emptyCard}>
+                <Ionicons name="receipt-outline" size={24} color="#475569" style={{ marginBottom: 6 }} />
+                <Text style={styles.emptyCardText}>No transactions recorded yet.</Text>
               </View>
             ) : (
-              transactions.map((tx: TransactionRecord) => (
-                <View key={tx.id} style={styles.txCard}>
-                  <View style={styles.txHeader}>
-                    <Text style={styles.txId}>{tx.id}</Text>
-                    <View
-                      style={[
-                        styles.statusChip,
-                        { backgroundColor: `${getStatusBadgeColor(tx.status)}22` },
-                      ]}
-                    >
-                      <View
-                        style={[
-                          styles.statusDot,
-                          { backgroundColor: getStatusBadgeColor(tx.status) },
-                        ]}
-                      />
-                      <Text
-                        style={[
-                          styles.statusText,
-                          { color: getStatusBadgeColor(tx.status) },
-                        ]}
-                      >
-                        {tx.status}
-                      </Text>
+              transactions.map((tx: TransactionRecord) => {
+                const badge = getStatusBadge(tx.status);
+                return (
+                  <View key={tx.id} style={styles.txRow}>
+                    <View style={styles.txTop}>
+                      <View>
+                        <Text style={styles.txId}>{tx.id}</Text>
+                        <Text style={styles.txDate}>{new Date(tx.createdAt).toLocaleTimeString()}</Text>
+                      </View>
+                      <View style={[styles.badgePill, { backgroundColor: `${badge.color}22` }]}>
+                        <View style={[styles.badgeDot, { backgroundColor: badge.color }]} />
+                        <Text style={[styles.badgeLabel, { color: badge.color }]}>{badge.label}</Text>
+                      </View>
                     </View>
+
+                    <Text style={styles.uuidLabel}>Idempotency UUID:</Text>
+                    <Text style={styles.uuidValue} numberOfLines={1} ellipsizeMode="middle">
+                      {tx.idempotencyKey}
+                    </Text>
+
+                    <View style={styles.txFooter}>
+                      <Text style={styles.footerCoins}>
+                        {tx.coins > 0 ? `+${tx.coins.toLocaleString()} Coins` : `$${tx.amount.toFixed(2)}`}
+                      </Text>
+                      <Text style={styles.footerMethod}>{tx.paymentMethod}</Text>
+                    </View>
+
+                    {tx.failureReason ? (
+                      <Text style={styles.failureNote}>{tx.failureReason}</Text>
+                    ) : null}
                   </View>
-
-                  <Text style={styles.idempKeyLabel}>Idempotency UUID:</Text>
-                  <Text style={styles.idempKey}>{tx.idempotencyKey}</Text>
-
-                  <View style={styles.txMetaRow}>
-                    <Text style={styles.txMeta}>Coins: +{tx.coins}</Text>
-                    <Text style={styles.txMeta}>Amount: ${tx.amount.toFixed(2)}</Text>
-                    <Text style={styles.txMeta}>{new Date(tx.createdAt).toLocaleTimeString()}</Text>
-                  </View>
-
-                  {tx.failureReason && (
-                    <Text style={styles.failureText}>Note: {tx.failureReason}</Text>
-                  )}
-                  {tx.serverReceiptId && (
-                    <Text style={styles.receiptText}>Receipt: {tx.serverReceiptId}</Text>
-                  )}
-                </View>
-              ))
+                );
+              })
             )}
 
-            {/* Raw MMKV Storage State */}
-            <View style={styles.sectionHeaderRow}>
-              <Text style={styles.sectionTitle}>RAW MMKV DISK STATE</Text>
-            </View>
-            <View style={styles.rawStorageBox}>
-              {Object.keys(storageKeys).length === 0 ? (
-                <Text style={styles.emptyText}>No storage keys.</Text>
-              ) : (
-                Object.entries(storageKeys).map(([key, val]) => (
-                  <View key={key} style={styles.storageEntry}>
-                    <Text style={styles.storageKey}>{key}:</Text>
-                    <Text style={styles.storageVal} numberOfLines={3} ellipsizeMode="tail">
-                      {val}
-                    </Text>
-                  </View>
-                ))
-              )}
-            </View>
-
-            {/* Reset All Button */}
-            <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
-              <Ionicons name="trash-outline" size={16} color="#ef4444" style={{ marginRight: 6 }} />
-              <Text style={styles.resetButtonText}>Reset All Wallet & Ledger Data</Text>
+            {/* RESET BUTTON */}
+            <TouchableOpacity style={styles.resetBtn} onPress={handleReset} activeOpacity={0.85}>
+              <Ionicons name="trash-outline" size={15} color="#f87171" style={{ marginRight: 6 }} />
+              <Text style={styles.resetBtnText}>Reset Demo Ledger & Balance</Text>
             </TouchableOpacity>
 
             <View style={{ height: 40 }} />
@@ -231,17 +233,17 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.8)',
+    backgroundColor: 'rgba(0,0,0,0.7)',
     justifyContent: 'flex-end',
   },
   sheet: {
-    backgroundColor: '#0b0e14',
+    backgroundColor: '#0e111a',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 20,
-    maxHeight: '88%',
+    maxHeight: '85%',
     borderWidth: 1,
-    borderColor: '#1f293d',
+    borderColor: '#1e2436',
   },
   header: {
     flexDirection: 'row',
@@ -253,61 +255,89 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  iconCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#162338',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 10,
+  },
   title: {
     color: '#ffffff',
     fontSize: 16,
     fontWeight: '700',
-    marginLeft: 8,
+  },
+  subtitle: {
+    color: '#64748b',
+    fontSize: 12,
   },
   scrollArea: {
-    marginBottom: 10,
+    marginBottom: 8,
   },
-  metricRow: {
+  statsGrid: {
     flexDirection: 'row',
     gap: 10,
     marginBottom: 16,
   },
-  metricBox: {
+  statCard: {
     flex: 1,
-    backgroundColor: '#161b26',
+    backgroundColor: '#151926',
+    borderRadius: 14,
     padding: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#242c3d',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#20273a',
   },
-  metricLabel: {
+  statLabel: {
     color: '#64748b',
     fontSize: 10,
     fontWeight: '700',
   },
-  metricVal: {
+  statValue: {
     color: '#f8fafc',
     fontSize: 16,
     fontWeight: '800',
     marginTop: 4,
   },
-  reconcileBox: {
-    backgroundColor: '#0c2340',
-    borderColor: '#0284c7',
+  scenarioCard: {
+    backgroundColor: '#151926',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
     borderWidth: 1,
-    borderRadius: 14,
-    padding: 14,
-    marginBottom: 18,
+    borderColor: '#222a3d',
   },
-  reconcileTitle: {
+  scenarioCardActive: {
+    borderColor: '#ef4444',
+    backgroundColor: '#2e1215',
+  },
+  scenarioHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  scenarioTag: {
     color: '#38bdf8',
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+    marginBottom: 3,
+  },
+  scenarioTitle: {
+    color: '#f8fafc',
     fontSize: 14,
     fontWeight: '700',
     marginBottom: 4,
   },
-  reconcileDesc: {
+  scenarioDesc: {
     color: '#94a3b8',
     fontSize: 12,
     lineHeight: 16,
-    marginBottom: 12,
+    marginBottom: 10,
   },
-  reconcileBtn: {
+  actionBtn: {
     backgroundColor: '#0284c7',
     flexDirection: 'row',
     alignItems: 'center',
@@ -315,30 +345,33 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 10,
   },
-  reconcileBtnText: {
+  actionBtnText: {
     color: '#ffffff',
     fontSize: 13,
     fontWeight: '700',
   },
-  reportBox: {
+  reportPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#062b1a',
-    borderColor: '#10b981',
-    borderWidth: 1,
     borderRadius: 8,
     padding: 10,
     marginTop: 10,
+    borderWidth: 1,
+    borderColor: '#10b98133',
   },
-  reportText: {
+  reportPillText: {
     color: '#34d399',
     fontSize: 12,
     fontWeight: '600',
+    flex: 1,
   },
-  sectionHeaderRow: {
+  sectionRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginTop: 8,
     marginBottom: 10,
-    marginTop: 6,
   },
   sectionTitle: {
     color: '#64748b',
@@ -346,33 +379,33 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 0.5,
   },
-  sectionCount: {
+  sectionSubtitle: {
     color: '#475569',
     fontSize: 11,
   },
-  emptyBox: {
-    padding: 20,
+  emptyCard: {
+    backgroundColor: '#151926',
+    borderRadius: 14,
+    padding: 24,
     alignItems: 'center',
-    backgroundColor: '#161b26',
-    borderRadius: 12,
     marginBottom: 16,
   },
-  emptyText: {
+  emptyCardText: {
     color: '#64748b',
     fontSize: 13,
   },
-  txCard: {
-    backgroundColor: '#141822',
-    borderWidth: 1,
-    borderColor: '#222838',
-    borderRadius: 12,
-    padding: 12,
+  txRow: {
+    backgroundColor: '#141824',
+    borderRadius: 14,
+    padding: 14,
     marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#20273a',
   },
-  txHeader: {
+  txTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: 6,
   },
   txId: {
@@ -380,90 +413,73 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
   },
-  statusChip: {
+  txDate: {
+    color: '#64748b',
+    fontSize: 11,
+    marginTop: 2,
+  },
+  badgePill: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 8,
   },
-  statusDot: {
+  badgeDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    marginRight: 6,
+    marginRight: 5,
   },
-  statusText: {
-    fontSize: 10,
-    fontWeight: '800',
+  badgeLabel: {
+    fontSize: 11,
+    fontWeight: '700',
   },
-  idempKeyLabel: {
+  uuidLabel: {
     color: '#64748b',
     fontSize: 10,
     marginTop: 2,
   },
-  idempKey: {
+  uuidValue: {
     color: '#38bdf8',
     fontSize: 11,
     fontFamily: 'monospace',
-    marginBottom: 6,
+    marginTop: 1,
   },
-  txMetaRow: {
+  txFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 4,
-    paddingTop: 6,
+    marginTop: 8,
+    paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: '#1e2433',
+    borderTopColor: '#1e2436',
   },
-  txMeta: {
+  footerCoins: {
+    color: '#f59e0b',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  footerMethod: {
     color: '#94a3b8',
     fontSize: 11,
   },
-  failureText: {
+  failureNote: {
     color: '#f87171',
     fontSize: 11,
     marginTop: 6,
   },
-  receiptText: {
-    color: '#34d399',
-    fontSize: 11,
-    marginTop: 4,
-  },
-  rawStorageBox: {
-    backgroundColor: '#12151d',
-    borderRadius: 12,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#1e2330',
-    marginBottom: 16,
-  },
-  storageEntry: {
-    marginBottom: 8,
-  },
-  storageKey: {
-    color: '#f59e0b',
-    fontSize: 11,
-    fontWeight: '700',
-    fontFamily: 'monospace',
-  },
-  storageVal: {
-    color: '#94a3b8',
-    fontSize: 11,
-    fontFamily: 'monospace',
-    marginTop: 2,
-  },
-  resetButton: {
+  resetBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#1f1315',
+    backgroundColor: '#261214',
     borderColor: '#7f1d1d',
     borderWidth: 1,
     paddingVertical: 12,
     borderRadius: 12,
+    marginTop: 8,
   },
-  resetButtonText: {
+  resetBtnText: {
     color: '#f87171',
     fontSize: 13,
     fontWeight: '700',
