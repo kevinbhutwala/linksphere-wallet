@@ -5,7 +5,10 @@ import {
   Text,
   TouchableOpacity,
   StatusBar,
+  LogBox,
 } from 'react-native';
+
+LogBox.ignoreAllLogs();
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { HeaderWalletBar } from './src/components/HeaderWalletBar';
 import { CoinStoreScreen } from './src/screens/CoinStoreScreen';
@@ -31,7 +34,7 @@ export default function App() {
   const [toast, setToast] = useState<ToastMessage | null>(null);
   const [isSendingGift, setIsSendingGift] = useState(false);
 
-  const { sendGiftOptimistic, balance } = useWalletStore();
+  const { sendGiftOptimistic, balance, scenarioBanner, setScenarioBanner } = useWalletStore();
   const { reconcilePendingTransactions, addPendingTransaction, updateTransactionStatus } = useTransactionStore();
 
   /**
@@ -42,6 +45,13 @@ export default function App() {
       try {
         const result = await reconcilePendingTransactions();
         if (result.reconciledCount > 0) {
+          setScenarioBanner({
+            scenarioNumber: 3,
+            tag: 'SCENARIO 3 / 3: RECONCILIATION COMPLETE',
+            tagColor: '#059669',
+            title: `Boot Recovery: +${result.creditedCoins.toLocaleString()} Coins Credited!`,
+            description: `MMKV write-ahead log replayed safely. Restored ${result.reconciledCount} purchase(s) with zero duplicate crediting.`,
+          });
           setToast({
             id: `boot_recov_${Date.now()}`,
             type: 'success',
@@ -56,6 +66,15 @@ export default function App() {
 
     runBootReconciliation();
   }, []);
+
+  useEffect(() => {
+    if (scenarioBanner) {
+      const timer = setTimeout(() => {
+        setScenarioBanner(null);
+      }, 3500);
+      return () => clearTimeout(timer);
+    }
+  }, [scenarioBanner]);
 
   /**
    * EXECUTE OPTIMISTIC GIFT MUTATION
@@ -101,11 +120,19 @@ export default function App() {
         failureReason: `500 Server Error: Restored prior balance (${gift.cost} coins refunded).`,
       });
 
+      setScenarioBanner({
+        scenarioNumber: 2,
+        tag: 'SCENARIO 2 / 3: ATOMIC ROLLBACK',
+        tagColor: '#dc2626',
+        title: '500 Server Error: Spend Rolled Back!',
+        description: `UI debited optimistically, mock server returned 500 error, and wallet atomically restored prior balance from snapshot.`,
+      });
+
       setToast({
         id: `gift_fail_${Date.now()}`,
         type: 'error',
         title: 'Gift Delivery Failed',
-        description: `Server connection interrupted. ${gift.cost} coins refunded to your balance.`,
+        description: `Server 500 error. ${gift.cost} coins refunded to your balance.`,
       });
     } finally {
       setIsSendingGift(false);
@@ -143,7 +170,7 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+      <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right', 'bottom']}>
         <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
 
         {/* Hero Wallet Bar */}
@@ -155,6 +182,25 @@ export default function App() {
           }}
           isSendingGift={isSendingGift}
         />
+
+        {/* Sleek On-Screen Scenario Walkthrough Banner */}
+        {scenarioBanner && (
+          <View style={styles.scenarioBanner}>
+            <View style={styles.scenarioBannerHeader}>
+              <View style={[styles.scenarioTagBadge, { backgroundColor: scenarioBanner.tagColor }]}>
+                <Text style={styles.scenarioTagText}>{scenarioBanner.tag}</Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => setScenarioBanner(null)}
+                hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+              >
+                <Ionicons name="close-circle" size={18} color="#94a3b8" />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.scenarioBannerTitle}>{scenarioBanner.title}</Text>
+            <Text style={styles.scenarioBannerDesc}>{scenarioBanner.description}</Text>
+          </View>
+        )}
 
         {/* Clean Segmented Tab Control */}
         <View style={styles.segmentWrapper}>
@@ -304,5 +350,50 @@ const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
     backgroundColor: '#f8fafc',
+  },
+  scenarioBanner: {
+    position: 'absolute',
+    bottom: 30,
+    left: 16,
+    right: 16,
+    zIndex: 9999,
+    backgroundColor: '#0f172a',
+    borderRadius: 14,
+    padding: 14,
+    borderWidth: 1.5,
+    borderColor: '#334155',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 12,
+  },
+  scenarioBannerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  scenarioTagBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
+  scenarioTagText: {
+    color: '#ffffff',
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  scenarioBannerTitle: {
+    color: '#ffffff',
+    fontSize: 13,
+    fontWeight: '700',
+    marginBottom: 3,
+  },
+  scenarioBannerDesc: {
+    color: '#94a3b8',
+    fontSize: 11,
+    lineHeight: 15,
   },
 });

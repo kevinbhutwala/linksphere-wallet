@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { CoinPack, TransactionRecord } from '../types';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Props {
   visible: boolean;
@@ -29,6 +30,7 @@ export const StoreKitSheet: React.FC<Props> = ({
   onCancel,
   onSimulateKillApp,
 }) => {
+  const insets = useSafeAreaInsets();
   const [confirmed, setConfirmed] = useState(false);
 
   useEffect(() => {
@@ -40,9 +42,19 @@ export const StoreKitSheet: React.FC<Props> = ({
   if (!pack || !transaction) return null;
 
   return (
-    <Modal visible={visible} transparent animationType="slide">
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={!isProcessing ? onCancel : undefined}>
       <View style={styles.backdrop}>
-        <View style={styles.sheetContainer}>
+        <TouchableOpacity
+          style={StyleSheet.absoluteFill}
+          activeOpacity={1}
+          onPress={!isProcessing ? onCancel : undefined}
+        />
+        <View
+          style={[
+            styles.sheetContainer,
+            { paddingBottom: Math.max(insets.bottom, 20) + 16 },
+          ]}
+        >
           {/* Handle */}
           <View style={styles.handle} />
 
@@ -220,9 +232,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0fdf4',
     borderColor: '#bbf7d0',
     borderWidth: 1,
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 14,
+    borderRadius: 14,
+    padding: 14,
+    marginBottom: 16,
   },
   idempotencyHeader: {
     flexDirection: 'row',
@@ -239,11 +251,16 @@ const styles = StyleSheet.create({
     color: '#047857',
     fontSize: 12,
     fontFamily: 'monospace',
+    marginTop: 4,
+    lineHeight: 16,
   },
   accountRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 10,
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#f1f5f9',
     borderBottomWidth: 1,
     borderBottomColor: '#f1f5f9',
     marginBottom: 20,
@@ -251,6 +268,7 @@ const styles = StyleSheet.create({
   accountLabel: {
     color: '#64748b',
     fontSize: 13,
+    fontWeight: '500',
   },
   accountEmail: {
     color: '#0f172a',
@@ -268,7 +286,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 10,
+    marginBottom: 12,
     shadowColor: '#059669',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.25,
@@ -282,8 +300,9 @@ const styles = StyleSheet.create({
   },
   policySubtext: {
     color: '#64748b',
-    fontSize: 11,
+    fontSize: 12,
     textAlign: 'center',
+    lineHeight: 16,
   },
   processingContainer: {
     alignItems: 'center',

@@ -26,8 +26,8 @@ export const HeaderWalletBar: React.FC<Props> = ({
           <View style={styles.avatar}>
             <Text style={styles.avatarText}>KB</Text>
           </View>
-          <View>
-            <Text style={styles.greeting}>LinkSphere Wallet</Text>
+          <View style={styles.userInfo}>
+            <Text style={styles.greeting} numberOfLines={1}>LinkSphere Wallet</Text>
             <View style={styles.syncStatus}>
               <View style={styles.syncDot} />
               <Text style={styles.syncText}>Instant Sync • Active</Text>
@@ -52,7 +52,7 @@ export const HeaderWalletBar: React.FC<Props> = ({
               simulate500Error && styles.testDockTextActive,
             ]}
           >
-            {simulate500Error ? 'Server Error Active' : 'Console'}
+            {simulate500Error ? 'Error Active' : 'Console'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -72,7 +72,9 @@ export const HeaderWalletBar: React.FC<Props> = ({
             <Text style={styles.coinEmoji}>🪙</Text>
           </View>
           <Text style={styles.balanceAmount}>{balance.toLocaleString()}</Text>
-          <Text style={styles.currencyName}>COINS</Text>
+          <View style={styles.currencyBadge}>
+            <Text style={styles.currencyName}>COINS</Text>
+          </View>
         </View>
 
         {/* Action Buttons */}
@@ -103,11 +105,11 @@ export const HeaderWalletBar: React.FC<Props> = ({
             <View style={[styles.sim500IconWrap, simulate500Error && styles.sim500IconWrapActive]}>
               <Ionicons
                 name={simulate500Error ? 'alert-circle' : 'server-outline'}
-                size={13}
+                size={14}
                 color={simulate500Error ? '#dc2626' : '#059669'}
               />
             </View>
-            <View>
+            <View style={styles.sim500TextCol}>
               <Text style={[styles.sim500Label, simulate500Error && styles.sim500LabelActive]}>
                 Simulate 500 Server Failure
               </Text>
@@ -142,8 +144,10 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   userSection: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
+    marginRight: 10,
   },
   avatar: {
     width: 36,
@@ -155,6 +159,9 @@ const styles = StyleSheet.create({
     marginRight: 10,
     borderWidth: 1,
     borderColor: '#a7f3d0',
+  },
+  userInfo: {
+    flex: 1,
   },
   avatarText: {
     color: '#047857',
@@ -190,10 +197,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#ecfdf5',
     borderColor: '#a7f3d0',
     borderWidth: 1,
-    paddingHorizontal: 11,
-    paddingVertical: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
     borderRadius: 20,
-    marginRight: 48, // clear Expo Go gear icon
   },
   testDockBtnActive: {
     backgroundColor: '#fee2e2',
@@ -211,7 +217,7 @@ const styles = StyleSheet.create({
   heroCard: {
     backgroundColor: '#ffffff',
     borderRadius: 20,
-    padding: 18,
+    padding: 20,
     borderWidth: 1,
     borderColor: '#e2e8f0',
     shadowColor: '#059669',
@@ -224,7 +230,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 10,
   },
   cardLabel: {
     color: '#64748b',
@@ -251,8 +257,8 @@ const styles = StyleSheet.create({
   },
   balanceRow: {
     flexDirection: 'row',
-    alignItems: 'baseline',
-    marginBottom: 16,
+    alignItems: 'center',
+    marginBottom: 18,
   },
   coinGlyph: {
     marginRight: 8,
@@ -266,12 +272,20 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     letterSpacing: -0.5,
   },
+  currencyBadge: {
+    backgroundColor: '#ecfdf5',
+    borderColor: '#a7f3d0',
+    borderWidth: 1,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+    marginLeft: 10,
+  },
   currencyName: {
     color: '#059669',
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '800',
-    letterSpacing: 0.8,
-    marginLeft: 8,
+    letterSpacing: 0.6,
   },
   actionsRow: {
     flexDirection: 'row',
@@ -316,8 +330,8 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   sim500CardRow: {
-    marginTop: 14,
-    paddingTop: 12,
+    marginTop: 16,
+    paddingTop: 14,
     borderTopWidth: 1,
     borderTopColor: '#f1f5f9',
     flexDirection: 'row',
@@ -328,18 +342,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
+    marginRight: 12,
   },
   sim500IconWrap: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     backgroundColor: '#ecfdf5',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 8,
+    marginRight: 10,
   },
   sim500IconWrapActive: {
     backgroundColor: '#fee2e2',
+  },
+  sim500TextCol: {
+    flex: 1,
   },
   sim500Label: {
     fontSize: 12,
@@ -350,8 +368,9 @@ const styles = StyleSheet.create({
     color: '#dc2626',
   },
   sim500Sub: {
-    fontSize: 10,
+    fontSize: 11,
     color: '#64748b',
     marginTop: 1,
+    lineHeight: 15,
   },
 });

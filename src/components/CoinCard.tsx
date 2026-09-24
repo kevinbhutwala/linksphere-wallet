@@ -22,20 +22,26 @@ export const CoinCard: React.FC<Props> = ({ pack, onPress, disabled }) => {
   };
 
   return (
-    <View style={styles.cardContainer}>
+    <TouchableOpacity
+      activeOpacity={0.85}
+      style={styles.cardContainer}
+      disabled={disabled}
+      onPress={() => onPress(pack)}
+    >
       <View style={styles.card}>
-        {pack.badge && (
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>{pack.badge}</Text>
-          </View>
-        )}
-
         <View style={styles.leftCol}>
           <View style={styles.iconCircle}>
             <Ionicons name={getIconName() as any} size={24} color="#059669" />
           </View>
           <View style={styles.infoCol}>
-            <Text style={styles.title}>{pack.title}</Text>
+            <View style={styles.titleRow}>
+              <Text style={styles.title} numberOfLines={1}>{pack.title}</Text>
+              {pack.badge && (
+                <View style={styles.badgePill}>
+                  <Text style={styles.badgeText}>{pack.badge}</Text>
+                </View>
+              )}
+            </View>
             <View style={styles.coinsRow}>
               <Text style={styles.coinsText}>{pack.coins.toLocaleString()} Coins</Text>
               {pack.bonusCoins ? (
@@ -47,16 +53,11 @@ export const CoinCard: React.FC<Props> = ({ pack, onPress, disabled }) => {
           </View>
         </View>
 
-        <TouchableOpacity
-          activeOpacity={0.8}
-          style={[styles.buyButton, disabled && styles.disabledButton]}
-          disabled={disabled}
-          onPress={() => onPress(pack)}
-        >
+        <View style={[styles.buyButton, disabled && styles.disabledButton]}>
           <Text style={styles.priceText}>{pack.priceFormatted}</Text>
-        </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -77,33 +78,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderWidth: 1,
     borderColor: '#e2e8f0',
-    position: 'relative',
-    overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.04,
     shadowRadius: 6,
     elevation: 2,
   },
-  badge: {
-    position: 'absolute',
-    top: 0,
-    right: 18,
-    backgroundColor: '#10b981',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderBottomLeftRadius: 6,
-    borderBottomRightRadius: 6,
-  },
-  badgeText: {
-    color: '#ffffff',
-    fontSize: 9,
-    fontWeight: '800',
-    letterSpacing: 0.5,
-  },
   leftCol: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
+    marginRight: 12,
   },
   iconCircle: {
     width: 48,
@@ -114,16 +99,35 @@ const styles = StyleSheet.create({
     borderColor: '#a7f3d0',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 14,
+    marginRight: 12,
   },
   infoCol: {
+    flex: 1,
     justifyContent: 'center',
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+    flexWrap: 'wrap',
+    gap: 6,
   },
   title: {
     color: '#64748b',
     fontSize: 13,
     fontWeight: '600',
-    marginBottom: 4,
+  },
+  badgePill: {
+    backgroundColor: '#059669',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  badgeText: {
+    color: '#ffffff',
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 0.4,
   },
   coinsRow: {
     flexDirection: 'row',

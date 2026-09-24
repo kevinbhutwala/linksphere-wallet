@@ -58,17 +58,20 @@ const styles = StyleSheet.create({
     borderColor: '#e2e8f0',
   },
   leftCol: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
+    marginRight: 12,
   },
   skeletonIcon: {
     width: 48,
     height: 48,
     borderRadius: 24,
     backgroundColor: '#e2e8f0',
-    marginRight: 14,
+    marginRight: 12,
   },
   textCol: {
+    flex: 1,
     justifyContent: 'center',
   },
   skeletonTitle: {

@@ -8,6 +8,7 @@ import {
   Pressable,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface GiftOption {
   id: string;
@@ -39,10 +40,18 @@ export const GiftModal: React.FC<Props> = ({
   userBalance,
   isSending,
 }) => {
+  const insets = useSafeAreaInsets();
+
   return (
     <Modal visible={visible} transparent animationType="fade">
       <Pressable style={styles.backdrop} onPress={onClose}>
-        <Pressable style={styles.sheet} onPress={(e) => e.stopPropagation()}>
+        <Pressable
+          style={[
+            styles.sheet,
+            { paddingBottom: Math.max(insets.bottom, 20) + 16 },
+          ]}
+          onPress={(e) => e.stopPropagation()}
+        >
           <View style={styles.handle} />
 
           <View style={styles.header}>
@@ -181,20 +190,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#ecfdf5',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: '#a7f3d0',
   },
   costText: {
     color: '#047857',
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '800',
   },
   hint: {
-    color: '#94a3b8',
-    fontSize: 11,
+    color: '#64748b',
+    fontSize: 12,
     textAlign: 'center',
+    marginTop: 18,
+    marginBottom: 4,
   },
 });

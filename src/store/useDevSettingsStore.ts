@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { mockBackend } from '../services/backend/mockBackend';
 import { storage } from '../services/storage/storage';
+import { useWalletStore } from './useWalletStore';
 
 interface DevSettingsState {
   simulate500Error: boolean;
@@ -26,6 +27,17 @@ export const useDevSettingsStore = create<DevSettingsState>((set) => {
         const nextVal = !state.simulate500Error;
         storage.setBoolean('dev:simulate500', nextVal);
         mockBackend.simulate500Error = nextVal;
+
+        if (nextVal) {
+          useWalletStore.getState().setScenarioBanner({
+            scenarioNumber: 2,
+            tag: 'SCENARIO 2 / 3: OPTIMISTIC SPEND',
+            tagColor: '#dc2626',
+            title: '500 Server Outage Simulated (ON)',
+            description: 'Next spend action will debit UI instantly, fail with 500, then atomically restore from snapshot.',
+          });
+        }
+
         return { simulate500Error: nextVal };
       });
     },

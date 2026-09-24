@@ -32,7 +32,7 @@ export const CoinStoreScreen: React.FC<Props> = ({ onShowToast }) => {
 
   const { addPendingTransaction, updateTransactionStatus, markInterrupted } =
     useTransactionStore();
-  const { creditCoins } = useWalletStore();
+  const { creditCoins, setScenarioBanner } = useWalletStore();
 
   const fetchCatalog = async () => {
     try {
@@ -64,6 +64,14 @@ export const CoinStoreScreen: React.FC<Props> = ({ onShowToast }) => {
     setSelectedPack(pack);
     setActiveTx(pendingTx);
     setIsSheetVisible(true);
+
+    setScenarioBanner({
+      scenarioNumber: 1,
+      tag: 'SCENARIO 1 / 3: HAPPY PATH',
+      tagColor: '#059669',
+      title: `StoreKit Purchase: ${pack.title} (+${pack.coins + (pack.bonusCoins || 0)} Coins)`,
+      description: 'Pre-persisting client UUID in MMKV • Simulating Face ID • Instant credit.',
+    });
   };
 
   /**
@@ -135,6 +143,14 @@ export const CoinStoreScreen: React.FC<Props> = ({ onShowToast }) => {
     setIsSheetVisible(false);
     setActiveTx(null);
     setSelectedPack(null);
+
+    setScenarioBanner({
+      scenarioNumber: 3,
+      tag: 'SCENARIO 3 / 3: NETWORK DROP',
+      tagColor: '#d97706',
+      title: 'Mid-Flight Network Interruption',
+      description: 'Transaction persisted in MMKV as INTERRUPTED. Ready for boot recovery on app relaunch.',
+    });
 
     onShowToast({
       id: `toast_${Date.now()}`,
@@ -218,7 +234,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 16,
-    paddingBottom: 32,
+    paddingBottom: 40,
   },
   sectionHeaderWrap: {
     marginBottom: 16,
@@ -258,12 +274,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 18,
-    paddingVertical: 8,
+    backgroundColor: '#f8fafc',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    marginTop: 14,
+    marginBottom: 10,
   },
   trustText: {
     color: '#64748b',
     fontSize: 11,
-    fontWeight: '500',
+    fontWeight: '600',
+    textAlign: 'center',
   },
 });

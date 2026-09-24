@@ -2,18 +2,28 @@ import { create } from 'zustand';
 import { storage } from '../services/storage/storage';
 import { mockBackend } from '../services/backend/mockBackend';
 
+export interface ScenarioBannerInfo {
+  scenarioNumber: 1 | 2 | 3;
+  tag: string;
+  tagColor: string;
+  title: string;
+  description: string;
+}
+
 interface WalletState {
   balance: number;
   isDeducting: boolean;
   lastDeductedAmount: number | null;
   rollbackCount: number;
   optimisticSnapshot: number | null;
+  scenarioBanner: ScenarioBannerInfo | null;
 
   // Actions
   creditCoins: (amount: number) => void;
   sendGiftOptimistic: (giftId?: string, cost?: number) => Promise<{ success: boolean; balance: number }>;
   setBalance: (newBalance: number) => void;
   resetWallet: () => void;
+  setScenarioBanner: (banner: ScenarioBannerInfo | null) => void;
 }
 
 const STORAGE_KEY_BALANCE = 'wallet:balance';
@@ -38,6 +48,9 @@ export const useWalletStore = create<WalletState>((set, get) => {
     lastDeductedAmount: null,
     rollbackCount: 0,
     optimisticSnapshot: null,
+    scenarioBanner: null,
+
+    setScenarioBanner: (banner: ScenarioBannerInfo | null) => set({ scenarioBanner: banner }),
 
     creditCoins: (amount: number) => {
       const current = get().balance;
@@ -120,6 +133,7 @@ export const useWalletStore = create<WalletState>((set, get) => {
         lastDeductedAmount: null,
         rollbackCount: 0,
         optimisticSnapshot: null,
+        scenarioBanner: null,
       });
     },
   };

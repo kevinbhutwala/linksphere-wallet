@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 16,
-    paddingBottom: 32,
+    paddingBottom: 40,
   },
   sectionHeaderWrap: {
     marginBottom: 16,
@@ -153,13 +153,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#f8fafc',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
     marginTop: 14,
-    paddingVertical: 8,
+    marginBottom: 10,
   },
   policyFooterText: {
     color: '#64748b',
     fontSize: 11,
-    fontWeight: '500',
+    fontWeight: '600',
     textAlign: 'center',
   },
 });

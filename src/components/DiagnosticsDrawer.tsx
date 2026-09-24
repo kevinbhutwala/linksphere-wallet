@@ -14,6 +14,7 @@ import { useWalletStore } from '../store/useWalletStore';
 import { useDevSettingsStore } from '../store/useDevSettingsStore';
 import { storage } from '../services/storage/storage';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { TransactionRecord } from '../types';
 import { generateUUID } from '../utils/uuid';
 
@@ -34,6 +35,7 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
   initialTab = 'SCENARIOS',
   onTrigger500Test,
 }) => {
+  const insets = useSafeAreaInsets();
   const { transactions, isReconciling, reconcilePendingTransactions, clearTransactions, addPendingTransaction } =
     useTransactionStore();
   const { balance, rollbackCount, resetWallet } = useWalletStore();
@@ -109,22 +111,32 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
   });
 
   return (
-    <Modal visible={visible} transparent animationType="slide">
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={styles.backdrop}>
-        <View style={styles.sheet}>
+        <TouchableOpacity style={StyleSheet.absoluteFill} activeOpacity={1} onPress={onClose} />
+        <View
+          style={[
+            styles.sheet,
+            { paddingBottom: Math.max(insets.bottom, 20) + 16 },
+          ]}
+        >
           {/* Header */}
           <View style={styles.header}>
             <View style={styles.headerTitleRow}>
               <View style={styles.iconCircle}>
                 <Ionicons name="options-outline" size={18} color="#059669" />
               </View>
-              <View>
-                <Text style={styles.title}>System Console & Audit Ledger</Text>
-                <Text style={styles.subtitle}>Resilience Controls, Ledger & Compliance</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.title} numberOfLines={1}>System Console & Audit</Text>
+                <Text style={styles.subtitle}>Resilience Controls & Ledger</Text>
               </View>
             </View>
-            <TouchableOpacity onPress={onClose} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-              <Ionicons name="close-circle" size={26} color="#94a3b8" />
+            <TouchableOpacity
+              onPress={onClose}
+              hitSlop={{ top: 16, bottom: 16, left: 16, right: 16 }}
+              style={{ padding: 6 }}
+            >
+              <Ionicons name="close-circle" size={28} color="#94a3b8" />
             </TouchableOpacity>
           </View>
 
@@ -138,10 +150,10 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
                 name="shield-outline"
                 size={14}
                 color={activeTab === 'SCENARIOS' ? '#059669' : '#64748b'}
-                style={{ marginRight: 5 }}
+                style={{ marginRight: 4 }}
               />
               <Text style={[styles.tabText, activeTab === 'SCENARIOS' && styles.tabTextActive]}>
-                Resilience Suite
+                Resilience
               </Text>
             </TouchableOpacity>
 
@@ -153,10 +165,10 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
                 name="receipt-outline"
                 size={14}
                 color={activeTab === 'LEDGER' ? '#059669' : '#64748b'}
-                style={{ marginRight: 5 }}
+                style={{ marginRight: 4 }}
               />
               <Text style={[styles.tabText, activeTab === 'LEDGER' && styles.tabTextActive]}>
-                Transaction Ledger ({transactions.length})
+                Ledger ({transactions.length})
               </Text>
             </TouchableOpacity>
 
@@ -168,7 +180,7 @@ export const DiagnosticsDrawer: React.FC<Props> = ({
                 name="shield-checkmark-outline"
                 size={14}
                 color={activeTab === 'POLICY' ? '#059669' : '#64748b'}
-                style={{ marginRight: 5 }}
+                style={{ marginRight: 4 }}
               />
               <Text style={[styles.tabText, activeTab === 'POLICY' && styles.tabTextActive]}>
                 Store Policy
@@ -531,17 +543,18 @@ const styles = StyleSheet.create({
   tabContainer: {
     flexDirection: 'row',
     backgroundColor: '#f1f5f9',
-    borderRadius: 12,
-    padding: 3,
+    borderRadius: 14,
+    padding: 4,
     marginBottom: 16,
   },
   tabButton: {
     flex: 1,
     flexDirection: 'row',
-    paddingVertical: 8,
+    paddingVertical: 9,
+    paddingHorizontal: 4,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 9,
+    borderRadius: 10,
   },
   tabButtonActive: {
     backgroundColor: '#ffffff',
@@ -609,14 +622,15 @@ const styles = StyleSheet.create({
   scenarioHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 4,
+    flexWrap: 'wrap',
+    gap: 6,
+    marginBottom: 6,
   },
   scenarioTagBadge: {
     backgroundColor: '#ecfdf5',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 6,
-    marginRight: 6,
   },
   scenarioTagText: {
     color: '#059669',
@@ -628,12 +642,13 @@ const styles = StyleSheet.create({
     color: '#0f172a',
     fontSize: 14,
     fontWeight: '700',
+    flexShrink: 1,
   },
   scenarioDesc: {
     color: '#64748b',
     fontSize: 12,
-    lineHeight: 17,
-    marginTop: 3,
+    lineHeight: 18,
+    marginTop: 4,
   },
   scenarioActionBtn: {
     flexDirection: 'row',

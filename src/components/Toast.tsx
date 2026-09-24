@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export interface ToastMessage {
   id: string;
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export const Toast: React.FC<Props> = ({ toast, onDismiss }) => {
+  const insets = useSafeAreaInsets();
   const translateY = useRef(new Animated.Value(-80)).current;
   const opacity = useRef(new Animated.Value(0)).current;
 
@@ -58,7 +60,13 @@ export const Toast: React.FC<Props> = ({ toast, onDismiss }) => {
   const isSuccess = toast.type === 'success';
 
   return (
-    <View style={styles.container} pointerEvents="box-none">
+    <View
+      style={[
+        styles.container,
+        { top: Math.max(insets.top + 8, 48) },
+      ]}
+      pointerEvents="box-none"
+    >
       <Animated.View
         style={[
           styles.toastCard,

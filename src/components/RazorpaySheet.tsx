@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { GatewayProduct, TransactionRecord } from '../types';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Props {
   visible: boolean;
@@ -25,6 +26,7 @@ export const RazorpaySheet: React.FC<Props> = ({
   onSuccess,
   onCancel,
 }) => {
+  const insets = useSafeAreaInsets();
   const [selectedMethod, setSelectedMethod] = useState<'UPI' | 'CARD' | 'NETBANKING'>('UPI');
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -40,7 +42,12 @@ export const RazorpaySheet: React.FC<Props> = ({
   return (
     <Modal visible={visible} transparent animationType="slide">
       <View style={styles.backdrop}>
-        <View style={styles.container}>
+        <View
+          style={[
+            styles.container,
+            { paddingBottom: Math.max(insets.bottom, 20) + 16 },
+          ]}
+        >
           {/* Header */}
           <View style={styles.header}>
             <View>
@@ -234,10 +241,10 @@ const styles = StyleSheet.create({
   submitButton: {
     backgroundColor: '#059669',
     paddingVertical: 14,
-    borderRadius: 12,
+    borderRadius: 14,
     alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 10,
+    marginTop: 12,
+    marginBottom: 12,
     shadowColor: '#059669',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.25,
@@ -254,8 +261,10 @@ const styles = StyleSheet.create({
   },
   complianceNote: {
     color: '#64748b',
-    fontSize: 11,
+    fontSize: 12,
     textAlign: 'center',
-    marginTop: 6,
+    lineHeight: 16,
+    marginTop: 8,
+    marginBottom: 4,
   },
 });
